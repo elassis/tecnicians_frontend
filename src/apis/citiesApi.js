@@ -1,0 +1,1 @@
+export const CITIES_URL = "http://localhost:80/technicians/public/api/cities";
