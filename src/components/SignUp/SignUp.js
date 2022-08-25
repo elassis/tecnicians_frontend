@@ -7,12 +7,14 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { CITIES_URL } from "../../apis/citiesApi";
 import { fetchCities } from "../../redux/slices/City/citySlice";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {    
   const { register, handleSubmit, formState:{ errors } } = useForm();
   const dataArray = [];
   const dispatch = useDispatch();
   const [cities, setCities] = useState(); 
+  const navigate = useNavigate();
 
   const getData = () => {
     axios.get(CITIES_URL)
@@ -51,7 +53,7 @@ const SignUp = () => {
       sector:data.sector,
       number:data.number,
     })
-    .then((response) => {response.status === 201 ? console.log('address save') : console.log("address not saved")})
+    .then((response) => {response.status === 201 ? navigate('/home') : console.log("address not saved")})
     .catch((error) => console.log(error));
   }
 

@@ -1,3 +1,4 @@
+import LandingPage from "./components/LandingPage/LandingPage";
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import SignUp from "./components/SignUp/SignUp";
@@ -10,9 +11,10 @@ function App() {
     <Provider store = {store}>
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route exact path="/" element={<LandingPage />} />
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/signup" element={<SignUp />} />
+          <Route exact path="/home" element={<Home />} />
         </Routes>
       </Router>
     </Provider>
