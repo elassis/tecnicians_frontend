@@ -1,10 +1,10 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-
     const { register, handleSubmit, formState:{ errors }} = useForm();
+    const navigate = useNavigate();
     const send = (data) => {
         console.log(data);
     }
@@ -24,7 +24,7 @@ const Login = () => {
                     })} />
                     {errors.password?.type === "required" && <p>password is required</p>}
                 </div>
-                <button>Login</button>
+                <button>Login</button> <button onClick={() => navigate('/signup')}>register</button>
             </form>
         </>
     )

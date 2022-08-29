@@ -1,1 +1,1 @@
-export const SAVE_ADDRESS_API = "http://localhost:80/technicians/public/api/address";
+export const SAVE_ADDRESS_API = "/api/address";

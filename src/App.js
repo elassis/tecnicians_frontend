@@ -5,16 +5,21 @@ import SignUp from "./components/SignUp/SignUp";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import store from './redux/store/store';
 import { Provider } from 'react-redux';
+import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
+import NewPage from "./components/NewPage";
 
 function App() {
   return (
     <Provider store = {store}>
       <Router>
         <Routes>
+        <Route exact path="/test" element={<NewPage />} />
+          <Route element={<PrivateRoutes />}>
+            <Route exact path="/home" element={<Home />} />
+          </Route>
           <Route exact path="/" element={<LandingPage />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/signup" element={<SignUp />} />
-          <Route exact path="/home" element={<Home />} />
         </Routes>
       </Router>
     </Provider>

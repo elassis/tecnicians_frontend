@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import http from "../../axiosRequest";
 import { useForm } from "react-hook-form";
 import { SAVE_USER_API } from "../../apis/registerApi";
 import { SAVE_ADDRESS_API } from "../../apis/addressApi";
@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { CITIES_URL } from "../../apis/citiesApi";
 import { fetchCities } from "../../redux/slices/City/citySlice";
 import { useNavigate } from "react-router-dom";
+import { addUser } from "../../redux/slices/User/userSlice";
 
 const SignUp = () => {    
   const { register, handleSubmit, formState:{ errors } } = useForm();
@@ -16,8 +17,8 @@ const SignUp = () => {
   const [cities, setCities] = useState(); 
   const navigate = useNavigate();
 
-  const getData = () => {
-    axios.get(CITIES_URL)
+  async function getData (){
+    await http.get(CITIES_URL)
     .then(response => {
       dataArray.push(...response.data)
       dispatch(fetchCities(dataArray));
@@ -32,8 +33,7 @@ const SignUp = () => {
   },[]);
 
   const send = (data) => {
-    console.log(data)
-    axios.post(SAVE_USER_API,{
+    http.post(SAVE_USER_API,{
       first_name: data.first_name,
       last_name:data.last_name,
       identification:data.identification,
@@ -41,19 +41,31 @@ const SignUp = () => {
       email:data.email,
       password:data.password,
     })
-    .then((response) => {response.status === 201 ? saveAddress(response.data.id, data) : console.log("user not saved")})
+    .then((response) => {
+      if(response.status === 201){
+        const userObj = {
+          id: response.data.id,
+          email: response.data.email
+        }
+        dispatch(addUser(userObj));
+        saveAddress(response.data.id, data)
+      }else{
+        console.log("user not saved")}
+      }) 
     .catch((error) => console.log(error));
   }
 
   const saveAddress = (id, data) => {
-    axios.post(SAVE_ADDRESS_API,{
+    http.post(SAVE_ADDRESS_API,{
       user_id: id,
       city_id:data.city,
       street:data.street,
       sector:data.sector,
       number:data.number,
     })
-    .then((response) => {response.status === 201 ? navigate('/home') : console.log("address not saved")})
+    .then((response) => {response.status === 201 ?
+      navigate('/home') 
+      : console.log("address not saved")})
     .catch((error) => console.log(error));
   }
 
@@ -136,7 +148,7 @@ const SignUp = () => {
           })} />
           {errors.password?.type === "required" && <p>password is required</p>}
           </div>
-          <button>Login</button>
+          <button>Register</button>
           </form>
         </>
     )

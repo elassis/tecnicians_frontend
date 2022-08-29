@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import http from "../../../axiosRequest";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { CITIES_URL } from "../../../apis/citiesApi";
 import axios from "axios";
 
 export const fetchCities = createAsyncThunk("cities/fetchCities", () =>{
-    return axios.get(CITIES_URL).then((response) => response.data)
+    return http.get(CITIES_URL).then((response) => response.data)
 });
 
 const initialState = {}
