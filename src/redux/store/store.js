@@ -1,12 +1,18 @@
-import { configureStore } from '@reduxjs/toolkit';
-import citySlice from '../slices/City/citySlice';
-import userSlice from '../slices/User/userSlice.js';
+import { configureStore } from "@reduxjs/toolkit";
+import citySlice from "../slices/City/citySlice";
+import userSlice from "../slices/User/userSlice.js";
+import modalSlice from "../slices/Modals/modalSlice";
+import technicianSlice from "../slices/Technician/technicianSlice";
+import professionsSlice from "../slices/Profession/professionSlice";
 
 const store = configureStore({
-  reducer:{
+  reducer: {
     cities: citySlice.reducer,
-    user: userSlice.reducer
-  }
+    professions: professionsSlice.reducer,
+    user: userSlice.reducer,
+    showModal: modalSlice.reducer,
+    technician: technicianSlice.reducer,
+  },
 });
 
 export default store;

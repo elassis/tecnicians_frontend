@@ -1,12 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Outlet, Navigate } from "react-router-dom";
 
-function PrivateRoutes(){
-  const state = useSelector(state => state.user);
-  return (
-    state.length > 0 ? <Outlet /> : <Navigate to="/Login" />
-  )
+function PrivateRoutes() {
+  const user = document.cookie.includes("user_email");
+  const token = document.cookie.includes("XSRF-TOKEN");
+  return user && token ? <Outlet /> : <Navigate to="/Login" />;
 }
 
 export default PrivateRoutes;

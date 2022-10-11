@@ -1,0 +1,1 @@
+export const PROFESSIONS_URL = "/api/professions";

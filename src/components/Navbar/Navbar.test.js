@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
-import Home from './Home';
+import Navbar from './Navbar';
 import {BrowserRouter as Router} from 'react-router-dom'
 
-test('renders Home text', () => {
+test(' render Icon test', () => {
   render(
     <Router>
-      <Home />
+      <Navbar />
     </Router>
   );
-  const title = screen.getAllByText(/this is the home/i);
+  const title = screen.getAllByText(/Icon/i);
   expect(title).toBeInTheDocument;
 });

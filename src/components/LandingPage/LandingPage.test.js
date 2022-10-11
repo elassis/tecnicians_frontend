@@ -1,8 +1,13 @@
 import { render, screen } from '@testing-library/react';
-import Home from './LandingPage';
+import LandingPage from './LandingPage';
+import { BrowserRouter } from 'react-router-dom'
 
 test('renders Home text', () => {
-  render(<Home />);
-  const title = screen.getAllByText(/this is the home/i);
+  render(
+    <BrowserRouter>
+      <LandingPage />
+    </BrowserRouter>
+    );
+  const title = screen.getAllByText(/this is the landing/i);
   expect(title).toBeInTheDocument;
 });
