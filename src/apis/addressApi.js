@@ -1,0 +1,1 @@
+export const SAVE_ADDRESS_API = "/api/address";

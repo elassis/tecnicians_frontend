@@ -1,0 +1,1 @@
+export const SAVE_USER_API = "/api/user";
