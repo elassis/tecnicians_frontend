@@ -1,11 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import http from "../../axiosRequest";
-
+import ModalStructure from "../Modals/ModalStructure";
+import BookModal from "../Modals/BookModal";
+import RequestJobModal from "../Modals/RequestJobModal";
+import SuccessModal from "../Modals/SuccessModal";
+import {
+  showBookingModal,
+  showSuccessModal,
+  showMessagesModal,
+} from "../../redux/slices/Modals/modalSlice";
+import {
+  addTechnician,
+  addSkills,
+} from "../../redux/slices/Technician/technicianSlice";
+import { useDispatch } from "react-redux";
+import { getSkills } from "../../common/functions";
 function Profile() {
   const params = useParams();
   const responseArr = [];
   const [proData, setProData] = useState();
+  const dispatch = useDispatch();
+  let skillsArr = [];
 
   async function getProfileData() {
     await http
@@ -48,7 +64,31 @@ function Profile() {
         </div>
       )}
       <br />
-      <button>Book</button>
+      <button
+        onClick={() => {
+          dispatch(addTechnician(proData[0][0]));
+          getSkills(params.id, http, dispatch, skillsArr, addSkills);
+          dispatch(showBookingModal(true));
+        }}
+      >
+        Book
+      </button>
+
+      <ModalStructure
+        children={<BookModal />}
+        reducer={"bookingModal"}
+        action={showBookingModal}
+      />
+      <ModalStructure
+        children={<RequestJobModal />}
+        reducer={"messagesModal"}
+        action={showMessagesModal}
+      />
+      <ModalStructure
+        children={<SuccessModal />}
+        reducer={"successModal"}
+        action={showSuccessModal}
+      />
     </div>
   );
 }

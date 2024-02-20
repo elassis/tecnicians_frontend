@@ -1,16 +1,17 @@
 import React from "react";
 import "./styling.css";
-import { showModal } from "../../redux/slices/Modals/modalSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
-const ModalStructure = ({ children }) => {
+const ModalStructure = (props) => {
+  const { children, reducer, action } = props;
   const dispatch = useDispatch();
-  const show = useSelector((state) => state.showModal);
-
+  const show = useSelector(state => state.modals[`${reducer}`]);
+  
   return (
     <div className={show ? "container-block" : "container-none"}>
       <div className="form">{children}</div>
-      <button onClick={() => dispatch(showModal(false))}>X</button>
+      <button onClick={() => {dispatch(action(false))}}>X</button>
     </div>
   );
 };

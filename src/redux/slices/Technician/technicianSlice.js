@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   tech: {},
   skills: {},
+  selectedSkill: ""
 };
 
 const technicianSlice = createSlice({
@@ -15,8 +16,13 @@ const technicianSlice = createSlice({
     addSkills: (state, action) => {
       state.skills = action.payload;
     },
+    selectedSkill: (state, action) => {
+      state.selectedSkill = action.payload;
+    },
   },
 });
 
-export const { addTechnician, addSkills } = technicianSlice.actions;
+
+
+export const { addTechnician, addSkills, selectedSkill } = technicianSlice.actions;
 export default technicianSlice;

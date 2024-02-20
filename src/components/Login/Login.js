@@ -1,7 +1,9 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+
 import http from "../../axiosRequest";
+
 
 const Login = () => {
   const {
@@ -10,6 +12,7 @@ const Login = () => {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+
 
   async function send(data) {
     await http.get("/sanctum/csrf-cookie");
@@ -22,6 +25,7 @@ const Login = () => {
       .then((response) => {
         if (response.status === 200) {
           document.cookie = `user_email=${data.email}`;
+          localStorage.setItem('user_email',data.email);
           navigate("/home");
         }
       })

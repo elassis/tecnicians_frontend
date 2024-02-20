@@ -1,13 +1,21 @@
-import { render, screen } from '@testing-library/react';
-import Navbar from './Navbar';
-import {BrowserRouter as Router} from 'react-router-dom'
+import { render } from "@testing-library/react";
+import Navbar from "./Navbar";
+import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+import store from "../../redux/store/store";
 
-test(' render Icon test', () => {
-  render(
-    <Router>
-      <Navbar />
-    </Router>
-  );
-  const title = screen.getAllByText(/Icon/i);
-  expect(title).toBeInTheDocument;
+
+const renderWithRedux = (component) => {
+  return render(<Provider store={store}>{component}</Provider>);
+};
+describe("Navbar Component", () => {
+  it("renders Icon test", () => {
+    const { getAllByText } = renderWithRedux(
+      <BrowserRouter>
+        <Navbar />
+      </BrowserRouter>
+    );
+    const title = getAllByText(/Icon/i);
+    expect(title).toBeInTheDocument;
+  });
 });

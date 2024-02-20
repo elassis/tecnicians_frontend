@@ -9,6 +9,7 @@ import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
 import NewPage from "./components/NewPage";
 import Navbar from "./components/Navbar/Navbar";
 import Profile from "./components/Profile/Profile";
+import Jobs from "./components/Jobs/Jobs";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route element={<PrivateRoutes />}>
               <Route exact path="/home" element={<Home />} />
               <Route exact path="/profile/:id" element={<Profile />} />
+              <Route exact path="/jobs/:id" element={<Jobs />} />
             </Route>
             <Route exact path="/" element={<LandingPage />} />
             <Route exact path="/login" element={<Login />} />

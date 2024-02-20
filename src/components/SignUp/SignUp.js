@@ -137,6 +137,7 @@ const SignUp = () => {
   const saveProfessions = (id, data) => {
     const result = saveTechnicianProfessions(id, data);
     let existError = false;
+    //TODO - refactor this is making a request repeatedly
     for (let prof in result) {
       http
         .post(SAVE_TECH_PROFESSION, {
@@ -326,6 +327,7 @@ const SignUp = () => {
                         })}
                     </select>
                     <input
+                    placeholder="price/hour"
                       type="number"
                       {...register(`price_profession_${index}`, {
                         required: true,
