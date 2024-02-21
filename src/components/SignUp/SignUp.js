@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import http from "../../axiosRequest";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { SAVE_USER_API } from "../../apis/registerApi";
 import { SAVE_TECHNICIAN } from "../../apis/techniciansApi";
 import { SAVE_ADDRESS_API } from "../../apis/addressApi";
@@ -14,11 +14,14 @@ import { addUser } from "../../redux/slices/User/userSlice";
 import { PROFESSIONS_URL } from "../../apis/professionApi";
 import { fetchProfessions } from "../../redux/slices/Profession/professionSlice";
 import { saveTechnicianProfessions } from "./signUpActions";
+import Select from "../../common/components/Select";
+import Input from "../../common/components/Input";
 
 const SignUp = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm();
   const dataArray = [];
@@ -312,29 +315,24 @@ const SignUp = () => {
               {selectArr.map((item, index) => {
                 return (
                   <div key={index}>
-                    <select
-                      {...register(`profession_${index}`, {
-                        required: true,
-                      })}
-                    >
-                      {professions &&
-                        professions.map((prof) => {
-                          return (
-                            <option key={prof.id} value={prof.id}>
-                              {prof.name}
-                            </option>
-                          );
-                        })}
-                    </select>
-                    <input
-                    placeholder="price/hour"
-                      type="number"
-                      {...register(`price_profession_${index}`, {
-                        required: true,
-                      })}
+                    <Controller
+                      name={`profession_${index}`}
+                      rules={{ required: "this field is required" }}
+                      control={control}
+                      render={(field) => (
+                        <Select name={field.name} items={professions} />
+                      )}
+                    />
+                    <Controller
+                      name={`price_profession_${index}`}
+                      rules={{ required: "this field is required" }}
+                      control={control}
+                      render={(field) => (
+                        <Input name={field.name} />
+                      )}
                     />
                     <button
-                      key={item}
+                      key={index}
                       onClick={(e) => {
                         e.preventDefault();
                         setSelectArr((selectArr) => [...selectArr, 1]);
