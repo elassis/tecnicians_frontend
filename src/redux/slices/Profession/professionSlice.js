@@ -17,7 +17,7 @@ const professionsSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder.addCase(fetchProfessions.fulfilled, (state, action) => {
-      state.professionss = action.payload;
+      state.professions = action.payload;
     });
   },
 });

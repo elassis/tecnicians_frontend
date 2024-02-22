@@ -1,21 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import http from "../../axiosRequest";
 import { useForm, Controller } from "react-hook-form";
 import { SAVE_USER_API } from "../../apis/registerApi";
 import { SAVE_TECHNICIAN } from "../../apis/techniciansApi";
 import { SAVE_ADDRESS_API } from "../../apis/addressApi";
 import { SAVE_TECH_PROFESSION } from "../../apis/techProfessionsApi";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { CITIES_URL } from "../../apis/citiesApi";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchCities } from "../../redux/slices/City/citySlice";
 import { useNavigate } from "react-router-dom";
 import { addUser } from "../../redux/slices/User/userSlice";
-import { PROFESSIONS_URL } from "../../apis/professionApi";
 import { fetchProfessions } from "../../redux/slices/Profession/professionSlice";
 import { saveTechnicianProfessions } from "./signUpActions";
 import Select from "../../common/components/Select";
 import Input from "../../common/components/Input";
+import { setSelectAmount } from "../../redux/slices/SignUp/signUpSlice";
 
 const SignUp = () => {
   const {
@@ -24,15 +22,22 @@ const SignUp = () => {
     control,
     formState: { errors },
   } = useForm();
-  const dataArray = [];
-  //const selectArrTest = [1]
-  const [selectArr, setSelectArr] = useState([1]);
-  const professionsArr = [];
-  const dispatch = useDispatch();
-  const [cities, setCities] = useState();
-  const [professions, setProfessions] = useState();
-  const [infoTech, setInfoTech] = useState(false);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const selectArr = useRef([]);
+  const { professions } = useSelector((state) => state.professions);
+  const { cities } = useSelector((state) => state.cities);
+  const { selectAmount } = useSelector(state => state.signUp);
+  const [infoTech, setInfoTech] = useState(false);
+
+  useEffect(() => {
+    getCities();
+    getProfessions();
+    //eslint-disable-next-line
+  }, []);
+
+
 
   async function login(email, password) {
     http
@@ -48,33 +53,27 @@ const SignUp = () => {
       .catch((error) => console.log(error));
   }
 
+  const addRemoveSelect = (type) => {
+    if(type === 'add'){
+      selectArr.current.push(selectArr.current.length + 1);
+    }
+    if(type === 'minus'){
+      selectArr.current.pop();
+    }
+    if(type === 'remove'){
+      selectArr.current = [];
+    }
+    dispatch(setSelectAmount([...selectArr.current]));
+  };
+
   async function getCities() {
-    await http
-      .get(CITIES_URL)
-      .then((response) => {
-        dataArray.push(...response.data);
-        dispatch(fetchCities(dataArray));
-        setCities(dataArray);
-      })
-      .catch((error) => console.log(error));
+    dispatch(fetchCities());
   }
 
   async function getProfessions() {
-    await http
-      .get(PROFESSIONS_URL)
-      .then((response) => {
-        professionsArr.push(...response.data);
-        dispatch(fetchProfessions(professionsArr));
-        setProfessions(professionsArr);
-      })
-      .catch((error) => console.log(error));
+    dispatch(fetchProfessions());
   }
 
-  useEffect(() => {
-    getCities();
-    getProfessions();
-    //eslint-disable-next-line
-  }, []);
   async function send(data) {
     http
       .post(SAVE_USER_API, {
@@ -301,8 +300,8 @@ const SignUp = () => {
             type="checkbox"
             id="cbox1"
             onClick={() => {
-              setSelectArr([1]);
               setInfoTech(!infoTech);
+              addRemoveSelect(!infoTech ? 'add' : 'remove');
             }}
           />
           I'm a technician
@@ -312,37 +311,43 @@ const SignUp = () => {
           <>
             <label>Professions</label>
             <div>
-              {selectArr.map((item, index) => {
-                return (
-                  <div key={index}>
-                    <Controller
-                      name={`profession_${index}`}
-                      rules={{ required: "this field is required" }}
-                      control={control}
-                      render={(field) => (
-                        <Select name={field.name} items={professions} />
-                      )}
-                    />
-                    <Controller
-                      name={`price_profession_${index}`}
-                      rules={{ required: "this field is required" }}
-                      control={control}
-                      render={(field) => (
-                        <Input name={field.name} />
-                      )}
-                    />
-                    <button
-                      key={index}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setSelectArr((selectArr) => [...selectArr, 1]);
-                      }}
-                    >
-                      +
-                    </button>
-                  </div>
-                );
-              })}
+              {selectAmount.map((item, index) => {
+                  return (
+                    <div key={index}>
+                      <Controller
+                        name={`profession_${index}`}
+                        rules={{ required: "this field is required" }}
+                        control={control}
+                        render={(field) => (
+                          <Select name={field.name} items={professions} />
+                        )}
+                      />
+                      <Controller
+                        name={`price_profession_${index}`}
+                        rules={{ required: "this field is required" }}
+                        control={control}
+                        render={(field) => <Input name={field.name} />}
+                      />
+                      <span
+                        key={`plus_${index}`}
+                        onClick={() => {
+                          addRemoveSelect('add');
+                        }}
+                      >
+                        +
+                      </span>
+                      &nbsp;
+                      <span
+                        key={`minus_${index}`}
+                        onClick={() => {
+                          addRemoveSelect('minus');
+                        }}
+                      >
+                        -
+                      </span>
+                    </div>
+                  );
+                })}
             </div>
           </>
         )}

@@ -8,9 +8,7 @@ const LandingPage = () => {
   };
   return (
     <div>
-      <h1>This is the Landing</h1>
-      <button onClick={() => goTo("/signup")}>signup</button>
-      <button onClick={() => goTo("/login")}>login</button>
+      <h1>This is the Landing</h1>      
     </div>
   );
 };

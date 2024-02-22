@@ -10,3 +10,4 @@ export async function getSkills(id, http, dispatch, skillsArr,addSkills) {
     })
     .catch((error) => console.log(error));
 }
+
