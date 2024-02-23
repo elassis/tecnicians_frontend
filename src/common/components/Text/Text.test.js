@@ -1,21 +1,25 @@
 import { render } from "@testing-library/react";
-import Navbar from "./Navbar";
+import Text from "./Text";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import store from "../../redux/store/store";
-
+import store from "../../../redux/store/store";
 
 const renderWithRedux = (component) => {
   return render(<Provider store={store}>{component}</Provider>);
 };
-describe("Navbar Component", () => {
+
+const defaultProps = {
+    children: "Test Text",
+};
+
+describe("Text Component", () => {
   it("renders text correctly", () => {
     const { getAllByText } = renderWithRedux(
       <BrowserRouter>
-        <Navbar />
+        <Text {...defaultProps}/>
       </BrowserRouter>
     );
-    const title = getAllByText(/technicians freelance/i);
-    expect(title).toBeInTheDocument;
+    const testText = getAllByText(/test text/i);
+    expect(testText).toBeInTheDocument;
   });
 });

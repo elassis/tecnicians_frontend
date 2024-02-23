@@ -1,21 +1,27 @@
 import { render } from "@testing-library/react";
-import Navbar from "./Navbar";
+import SideBar from "./SideBar";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import store from "../../redux/store/store";
-
+import store from "../../../redux/store/store";
 
 const renderWithRedux = (component) => {
   return render(<Provider store={store}>{component}</Provider>);
 };
-describe("Navbar Component", () => {
+
+const defaultProps = {
+  urls:{
+    loginUrl: "https://testUrl.com",
+    signUpUrl: "https://testUrl.com",
+  }
+};
+describe("SideBar Component", () => {
   it("renders text correctly", () => {
     const { getAllByText } = renderWithRedux(
       <BrowserRouter>
-        <Navbar />
+        <SideBar {...defaultProps}/>
       </BrowserRouter>
     );
-    const title = getAllByText(/technicians freelance/i);
-    expect(title).toBeInTheDocument;
+    const linkLoginText = getAllByText(/login/i);
+    expect(linkLoginText).toBeInTheDocument;
   });
 });
