@@ -1,1 +1,1 @@
-export const SITE_TITLE = 'Technicians Freelance';
+export const SITE_TITLE = 'TechFreelance';

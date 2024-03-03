@@ -5,15 +5,17 @@ import { modalsSlice } from "../slices/Modals/modalSlice";
 import technicianSlice from "../slices/Technician/technicianSlice";
 import professionsSlice from "../slices/Profession/professionSlice";
 import { signUpSlice } from "../slices/SignUp/signUpSlice.js";
+import { errorsSlice } from "../slices/Errors/errorsSlice.js";
 
 const store = configureStore({
   reducer: {
-    modals: modalsSlice.reducer,
-    cities: citySlice.reducer,
-    professions: professionsSlice.reducer,
     user: userSlice.reducer,
-    technician: technicianSlice.reducer,
+    cities: citySlice.reducer,
     signUp: signUpSlice.reducer,
+    modals: modalsSlice.reducer,
+    errors: errorsSlice.reducer,
+    professions: professionsSlice.reducer,
+    technician: technicianSlice.reducer,
   },
 });
 

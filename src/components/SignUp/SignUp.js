@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import http from "../../axiosRequest";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { SAVE_USER_API } from "../../apis/registerApi";
 import { SAVE_TECHNICIAN } from "../../apis/techniciansApi";
 import { SAVE_ADDRESS_API } from "../../apis/addressApi";
@@ -11,33 +11,35 @@ import { useNavigate } from "react-router-dom";
 import { addUser } from "../../redux/slices/User/userSlice";
 import { fetchProfessions } from "../../redux/slices/Profession/professionSlice";
 import { saveTechnicianProfessions } from "./signUpActions";
-import Select from "../../common/components/Select";
-import Input from "../../common/components/Input";
+import Select from "../../common/components/Select/Select";
+import Input from "../../common/components/Input/Input";
+import Button from "../../common/components/Button/Button";
 import { setSelectAmount } from "../../redux/slices/SignUp/signUpSlice";
+import { StyledSignUp } from "./SignUpStyles";
+import ProfessionSelect from "../../common/components/ProfessionSelect/ProfessionSelect";
 
 const SignUp = () => {
   const {
     register,
     handleSubmit,
+    triggerValidation,
     control,
+    unregister,
     formState: { errors },
   } = useForm();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const selectArr = useRef([]);
   const { professions } = useSelector((state) => state.professions);
   const { cities } = useSelector((state) => state.cities);
-  const { selectAmount } = useSelector(state => state.signUp);
+  const { selectAmount } = useSelector((state) => state.signUp);
   const [infoTech, setInfoTech] = useState(false);
+  const defaultOption = { id: "default", name: "Select a city" };
 
   useEffect(() => {
-    getCities();
-    getProfessions();
-    //eslint-disable-next-line
-  }, []);
-
-
+    dispatch(fetchCities());
+    dispatch(fetchProfessions());
+  }, [dispatch]);
 
   async function login(email, password) {
     http
@@ -53,29 +55,45 @@ const SignUp = () => {
       .catch((error) => console.log(error));
   }
 
-  const addRemoveSelect = (type) => {
-    if(type === 'add'){
-      selectArr.current.push(selectArr.current.length + 1);
+  const addRemoveSelect = (type, id = null) => {
+    let newState = null;
+    const currentIndex = selectAmount.length;
+    if (type === "add") {
+      const professionObj = {
+        id: currentIndex,
+        selectName: `profession_${currentIndex}`,
+        selectedValue: null,
+        inputName: `price_profession_${currentIndex}`,
+        inputValue: null,
+      };
+      newState = [...selectAmount, professionObj];
     }
-    if(type === 'minus'){
-      selectArr.current.pop();
+    if (type === "minus" && id !== null) {
+      const professionToRemove = selectAmount.filter((prof) => prof.id === id);
+      const updatedState = selectAmount.filter(
+        (prof) => prof.id !== professionToRemove[0].id
+      );
+
+      removeFromFormState(professionToRemove[0]);
+
+      newState = [...updatedState];
     }
-    if(type === 'remove'){
-      selectArr.current = [];
+    if (type === "remove") {
+      selectAmount.forEach((elem) => removeFromFormState(elem));
+      newState = [];
     }
-    dispatch(setSelectAmount([...selectArr.current]));
+    dispatch(setSelectAmount(newState));
   };
 
-  async function getCities() {
-    dispatch(fetchCities());
-  }
-
-  async function getProfessions() {
-    dispatch(fetchProfessions());
-  }
+  //delete element from form's state
+  const removeFromFormState = (elem) => {
+    unregister(elem.selectName);
+    unregister(elem.inputName);
+  };
 
   async function send(data) {
-    http
+    console.log(data);
+    /*   http
       .post(SAVE_USER_API, {
         first_name: data.first_name,
         last_name: data.last_name,
@@ -98,8 +116,7 @@ const SignUp = () => {
           console.log("user not saved");
         }
       })
-      .catch((error) => console.log(error));
-    //saveAddress(response.data.id, data);
+      .catch((error) => console.log(error)); */
   }
 
   const saveAddress = (id, data) => {
@@ -120,7 +137,6 @@ const SignUp = () => {
           : console.log("address not saved");
       })
       .catch((error) => console.log(error));
-    //saveProfessions(id, data)
   };
 
   const saveTechnician = (id, data) => {
@@ -157,203 +173,179 @@ const SignUp = () => {
     }
   };
 
+  const handleInputChange = async (e) => {
+    await triggerValidation(e.target.name);
+  };
+
   return (
-    <>
+    <StyledSignUp>
       <h1>Sign up</h1>
       <form onSubmit={handleSubmit(send)}>
-        <div>
-          <input
-            placeholder="First Name"
-            type="text"
-            {...register("first_name", {
-              required: true,
-            })}
-          />
-          {errors.first_name?.type === "required" && <p>Name is required</p>}
-        </div>
-        <div>
-          <input
-            placeholder="Last Name"
-            type="text"
-            {...register("last_name", {
-              required: true,
-            })}
-          />
-          {errors.last_name?.type === "required" && (
-            <p>last name is required</p>
-          )}
-        </div>
-        <div>
-          <input
-            placeholder="ID"
-            length="11"
-            type="number"
-            {...register("identification", {
-              required: true,
-              minLength: 11,
-              maxLength: 11,
-            })}
-          />
-          {errors.identification?.type === "required" && (
-            <p>identification is required</p>
-          )}
-          {errors.identification?.type === "minLength" && (
-            <p>too few, must be 11 characters length</p>
-          )}
-          {errors.identification?.type === "maxLength" && (
-            <p>too much, must be 11 characters length</p>
-          )}
-        </div>
-        <div>
-          <input
-            placeholder="Cellphone"
-            length="11"
-            type="number"
-            {...register("cellphone", {
-              required: true,
-              minLength: 10,
-              maxLength: 10,
-            })}
-          />
-          {errors.cellphone?.type === "required" && (
-            <p>identification is required</p>
-          )}
-          {errors.cellphone?.type === "minLength" && (
-            <p>too few, must be 11 characters length</p>
-          )}
-          {errors.cellphone?.type === "maxLength" && (
-            <p>too much, must be 11 characters length</p>
-          )}
-        </div>
-        <div>
-          <label>Address</label>
-          <div>
-            <select
+        <Input
+          name={"first_name"}
+          errors={errors}
+          control={control}
+          placeholder="First Name"
+          onChange={handleInputChange}
+          type="text"
+          {...register("first_name", {
+            required: true,
+          })}
+        />
+        <Input
+          name={"last_name"}
+          errors={errors}
+          control={control}
+          placeholder="Last Name"
+          onChange={handleInputChange}
+          type="text"
+          {...register("last_name", {
+            required: true,
+          })}
+        />
+        <Input
+          name={"identification"}
+          errors={errors}
+          control={control}
+          placeholder="ID"
+          onChange={handleInputChange}
+          type="text"
+          {...register("identification", {
+            required: true,
+            minLength: 11,
+            maxLength: 11,
+          })}
+        />
+        <Input
+          name={"cellphone"}
+          errors={errors}
+          control={control}
+          placeholder="Cellphone"
+          onChange={handleInputChange}
+          type="number"
+          {...register("cellphone", {
+            required: true,
+            minLength: 10,
+            maxLength: 10,
+          })}
+        />
+        <Input
+          name={"email"}
+          errors={errors}
+          control={control}
+          placeholder="Email"
+          onChange={handleInputChange}
+          type="email"
+          {...register("email", {
+            required: true,
+          })}
+        />
+        <Input
+          name={"password"}
+          errors={errors}
+          control={control}
+          placeholder="Password"
+          onChange={handleInputChange}
+          type="password"
+          {...register("password", {
+            required: true,
+          })}
+        />
+        <fieldset>
+          <legend>Address</legend>
+          {cities && (
+            <Select
+              name="city"
+              items={[defaultOption, ...cities]}
+              errors={errors}
+              onChange={handleInputChange}
               {...register("city", {
                 required: true,
-              })}
-            >
-              {cities &&
-                cities.map((city) => {
-                  return (
-                    <option key={city.id} value={city.id}>
-                      {city.name}
-                    </option>
-                  );
-                })}
-            </select>
-            {errors.city?.type === "required" && <p>city is required</p>}
-          </div>
-          <div>
-            <input
-              placeholder="calle"
-              type="text"
-              {...register("street", {
-                required: true,
+                pattern: {
+                  value: /^\d+$/,
+                },
               })}
             />
-            {errors.street?.type === "required" && <p>street is required</p>}
-          </div>
-          <div>
-            <input
-              placeholder="sector"
-              type="text"
-              {...register("sector", {
-                required: true,
-              })}
-            />
-            {errors.sector?.type === "required" && <p>sector is required</p>}
-          </div>
-          <div>
-            <input
-              placeholder="numero"
-              type="number"
-              {...register("number", {
-                required: true,
-              })}
-            />
-            {errors.number?.type === "required" && <p>number is required</p>}
-          </div>
-        </div>
-        <div>
-          <input
-            placeholder="email"
-            type="email"
-            {...register("email", {
+          )}
+          <Input
+            name={"street"}
+            errors={errors}
+            control={control}
+            placeholder="Street"
+            onChange={handleInputChange}
+            type="text"
+            {...register("street", {
               required: true,
             })}
           />
-          {errors.email?.type === "required" && <p>email is required</p>}
-        </div>
-        <div>
-          <input
-            placeholder="Password"
-            type="password"
-            {...register("password", {
+          <Input
+            name={"sector"}
+            errors={errors}
+            control={control}
+            placeholder="Sector"
+            onChange={handleInputChange}
+            type="text"
+            {...register("sector", {
               required: true,
             })}
           />
-          {errors.password?.type === "required" && <p>password is required</p>}
-        </div>
-        <label>
-          <input
+          <Input
+            name={"number"}
+            errors={errors}
+            control={control}
+            placeholder="Number"
+            onChange={handleInputChange}
+            type="number"
+            {...register("number", {
+              required: true,
+            })}
+          />
+        </fieldset>
+        <label className="professions_label">
+          <Input
+            name={"techCheckbox"}
+            checked={selectAmount.length > 0}
             type="checkbox"
-            id="cbox1"
-            onClick={() => {
+            onChange={() => {
               setInfoTech(!infoTech);
-              addRemoveSelect(!infoTech ? 'add' : 'remove');
+              addRemoveSelect(!infoTech ? "add" : "remove");
             }}
           />
           I'm a technician
         </label>
         <br />
-        {infoTech && (
+        {infoTech && selectAmount.length > 0 && (
           <>
-            <label>Professions</label>
-            <div>
+            <label className="professions_label">Professions</label>
+            <div className="professions_list">
               {selectAmount.map((item, index) => {
-                  return (
-                    <div key={index}>
-                      <Controller
-                        name={`profession_${index}`}
-                        rules={{ required: "this field is required" }}
-                        control={control}
-                        render={(field) => (
-                          <Select name={field.name} items={professions} />
-                        )}
-                      />
-                      <Controller
-                        name={`price_profession_${index}`}
-                        rules={{ required: "this field is required" }}
-                        control={control}
-                        render={(field) => <Input name={field.name} />}
-                      />
-                      <span
-                        key={`plus_${index}`}
-                        onClick={() => {
-                          addRemoveSelect('add');
-                        }}
-                      >
-                        +
-                      </span>
-                      &nbsp;
-                      <span
-                        key={`minus_${index}`}
-                        onClick={() => {
-                          addRemoveSelect('minus');
-                        }}
-                      >
-                        -
-                      </span>
-                    </div>
-                  );
-                })}
+                return (
+                  <ProfessionSelect
+                    key={item.id}
+                    id={item.id}
+                    className={"profession_wrapper"}
+                    selectName={item.selectName}
+                    selectValue={item.selectedValue}
+                    inputName={item.inputName}
+                    inputValue={item.inputValue}
+                    items={[
+                      { ...defaultOption, name: "Select a profession" },
+                      ...professions,
+                    ]}
+                    errors={errors}
+                    placeholder={"price/hour"}
+                    onClickAdd={() => addRemoveSelect("add")}
+                    onClickRemove={() => addRemoveSelect("minus", item.id)}
+                    register={register}
+                  />
+                );
+              })}
             </div>
           </>
         )}
-        <button>Register</button>
+        <Button>Register</Button>
       </form>
-    </>
+    </StyledSignUp>
   );
 };
 

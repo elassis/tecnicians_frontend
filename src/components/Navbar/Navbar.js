@@ -7,10 +7,11 @@ import SideBar from "../../common/components/SideBar/SideBar";
 import Link from "../../common/components/Link/Link";
 import Button from "../../common/components/Button/Button";
 import Text from "../../common/components/Text/Text";
+import { SITE_TITLE } from "../../common/constants/titles";
 
 function Navbar() {
   const user = useSelector((state) => state.user);
-  const [showSideBar, setShowSideBar] = useState(false);
+  const [defaultMargin, setDefaultMargin] = useState("-300px");
   const { isMobile } = useDevice();
   const navigate = useNavigate();
   const logOut = () => {
@@ -34,7 +35,7 @@ function Navbar() {
         {isMobile && (
           <div
             className="hamburger-icon"
-            onClick={() => setShowSideBar(!showSideBar)}
+            onClick={() => setDefaultMargin("0px")}
           >
             <div></div>
             <div></div>
@@ -47,7 +48,7 @@ function Navbar() {
               className="header"
               weight={"700"}
               textColor={"#ffffff"}
-              children={"Technicians Freelance"}
+              children={SITE_TITLE}
             />
             <div className="action-buttons">
               <Link url={"/signup"} children={"Signup"} />
@@ -66,7 +67,13 @@ function Navbar() {
           </>
         )}
       </StyledNavbar>
-      {<SideBar marginLeft={showSideBar ? '0px' : '-300px'} urls={urls} />}
+      {
+        <SideBar
+          marginLeft={defaultMargin}
+          showSideBar={setDefaultMargin}
+          urls={urls}
+        />
+      }
     </>
   );
 }
