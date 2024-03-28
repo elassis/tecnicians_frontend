@@ -1,13 +1,9 @@
 import styled from "styled-components";
 
 export const StyledLogin = styled.div`
-  padding:0 15px;
-  width:${props => props.$isMobile ? '100%' : '400px'};
-  margin:auto;
-  text-align:center;
-  box-sizing:border-box;
-
   > form {
+    max-width:500px;
+    margin:auto;
     display:flex;
     flex-direction:column;
     gap:10px;

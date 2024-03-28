@@ -1,3 +1,9 @@
+import { SAVE_USER_API } from "../../apis/registerApi";
+import { SAVE_TECHNICIAN } from "../../apis/techniciansApi";
+import { SAVE_ADDRESS_API } from "../../apis/addressApi";
+import { SAVE_TECH_PROFESSION } from "../../apis/techProfessionsApi";
+import http from "../../axiosRequest";
+
 export const saveTechnicianProfessions = (id, data) => {
   let arr = [];
   let i = 0;
@@ -28,3 +34,5 @@ export const saveTechnicianProfessions = (id, data) => {
 
   return objArr;
 };
+
+

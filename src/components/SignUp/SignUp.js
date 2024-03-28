@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import http from "../../axiosRequest";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { SAVE_USER_API } from "../../apis/registerApi";
 import { SAVE_TECHNICIAN } from "../../apis/techniciansApi";
 import { SAVE_ADDRESS_API } from "../../apis/addressApi";
 import { SAVE_TECH_PROFESSION } from "../../apis/techProfessionsApi";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchCities } from "../../redux/slices/City/citySlice";
 import { useNavigate } from "react-router-dom";
 import { addUser } from "../../redux/slices/User/userSlice";
@@ -14,9 +14,10 @@ import { saveTechnicianProfessions } from "./signUpActions";
 import Select from "../../common/components/Select/Select";
 import Input from "../../common/components/Input/Input";
 import Button from "../../common/components/Button/Button";
-import { setSelectAmount } from "../../redux/slices/SignUp/signUpSlice";
 import { StyledSignUp } from "./SignUpStyles";
 import ProfessionSelect from "../../common/components/ProfessionSelect/ProfessionSelect";
+import { addProfessionSelect } from "../../common/utils";
+import { setSelectAmount } from "../../redux/slices/SignUp/signUpSlice";
 
 const SignUp = () => {
   const {
@@ -55,45 +56,8 @@ const SignUp = () => {
       .catch((error) => console.log(error));
   }
 
-  const addRemoveSelect = (type, id = null) => {
-    let newState = null;
-    const currentIndex = selectAmount.length;
-    if (type === "add") {
-      const professionObj = {
-        id: currentIndex,
-        selectName: `profession_${currentIndex}`,
-        selectedValue: null,
-        inputName: `price_profession_${currentIndex}`,
-        inputValue: null,
-      };
-      newState = [...selectAmount, professionObj];
-    }
-    if (type === "minus" && id !== null) {
-      const professionToRemove = selectAmount.filter((prof) => prof.id === id);
-      const updatedState = selectAmount.filter(
-        (prof) => prof.id !== professionToRemove[0].id
-      );
-
-      removeFromFormState(professionToRemove[0]);
-
-      newState = [...updatedState];
-    }
-    if (type === "remove") {
-      selectAmount.forEach((elem) => removeFromFormState(elem));
-      newState = [];
-    }
-    dispatch(setSelectAmount(newState));
-  };
-
-  //delete element from form's state
-  const removeFromFormState = (elem) => {
-    unregister(elem.selectName);
-    unregister(elem.inputName);
-  };
-
   async function send(data) {
-    console.log(data);
-    /*   http
+    http
       .post(SAVE_USER_API, {
         first_name: data.first_name,
         last_name: data.last_name,
@@ -116,7 +80,7 @@ const SignUp = () => {
           console.log("user not saved");
         }
       })
-      .catch((error) => console.log(error)); */
+      .catch((error) => console.log(error));
   }
 
   const saveAddress = (id, data) => {
@@ -304,39 +268,40 @@ const SignUp = () => {
         <label className="professions_label">
           <Input
             name={"techCheckbox"}
-            checked={selectAmount.length > 0}
+            checked={infoTech}
             type="checkbox"
             onChange={() => {
               setInfoTech(!infoTech);
-              addRemoveSelect(!infoTech ? "add" : "remove");
+              if (infoTech && selectAmount.length < 1) {
+                addProfessionSelect(dispatch, setSelectAmount);
+              }
             }}
           />
           I'm a technician
         </label>
         <br />
-        {infoTech && selectAmount.length > 0 && (
+        {infoTech && (
           <>
             <label className="professions_label">Professions</label>
             <div className="professions_list">
               {selectAmount.map((item, index) => {
                 return (
                   <ProfessionSelect
-                    key={item.id}
                     id={item.id}
-                    className={"profession_wrapper"}
-                    selectName={item.selectName}
-                    selectValue={item.selectedValue}
+                    key={item.id}
+                    errors={errors}
+                    register={register}
+                    unregister={unregister}
+                    placeholder={"price/hour"}
                     inputName={item.inputName}
                     inputValue={item.inputValue}
+                    selectName={item.selectName}
+                    selectValue={item.selectedValue}
+                    className={"profession_wrapper"}
                     items={[
                       { ...defaultOption, name: "Select a profession" },
                       ...professions,
                     ]}
-                    errors={errors}
-                    placeholder={"price/hour"}
-                    onClickAdd={() => addRemoveSelect("add")}
-                    onClickRemove={() => addRemoveSelect("minus", item.id)}
-                    register={register}
                   />
                 );
               })}

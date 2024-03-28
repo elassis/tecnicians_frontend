@@ -1,101 +1,84 @@
-import React, { useState } from "react";
+import React, { useState }from "react";
 import http from "../../axiosRequest";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ModalStructure from "../Modals/ModalStructure";
+import ModalLayout from "../../common/Layout/ModalLayout/ModalLayout";
 import {
   showBookingModal,
-  showMessagesModal,
-  showSuccessModal,
 } from "../../redux/slices/Modals/modalSlice";
-import { useDispatch } from "react-redux";
-import {
-  addTechnician,
-  addSkills,
-} from "../../redux/slices/Technician/technicianSlice";
-import BookModal from "../Modals/BookModal";
-import RequestJobModal from "../Modals/RequestJobModal";
-import SuccessModal from "../Modals/SuccessModal";
+import { useDispatch, useSelector } from "react-redux";
+import BookModal from "../Modals/BookModal/BookModal";
 import { addUser } from "../../redux/slices/User/userSlice";
-import { getSkills } from "../../common/functions";
+import { StyledHome } from "./HomeStyles";
+import { Container } from "../../common/Layout/Container";
+import { StyledListContainer } from "../../common/Layout/StyledList";
+import { fetchTechnicians } from "../../redux/slices/Technicians/TechniciansSlice";
+import TechnicianCard from "../../common/components/TechnicianCard/TechnicianCard";
 
 const Home = () => {
-  const [techs, setTechs] = useState([]);
-  const techniciansAvailable = [];
-  let skillsArr = [];
+  const [selectedTechnician, setSelectedTechnician] = useState({});
+  const { technicians } = useSelector((state) => state.technicians);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const { bookingModal } = useSelector(
+    (state) => state.modals
+  );
+
   useEffect(() => {
-    getTechnicians();
+    dispatch(fetchTechnicians());
     setUserOnState();
   }, []);
 
-  async function getTechnicians() {
-    await http
-      .get("/api/index")
-      .then((response) => {
-        if (response.status === 200 && response.data.length > 0) {
-          response.data.map((tech) => techniciansAvailable.push(tech));
-          setTechs(techniciansAvailable);
-        }
-      })
-      .catch((error) => console.log(error));
-  }
+  //TODO - state should keep user on state, this function shouldn't be needed
   async function setUserOnState() {
     const savedEmail = localStorage.getItem("user_email");
     await http
       .get(`/api/user/${savedEmail}`)
       .then((response) => {
-        if (response.status === 200 && response.data.length > 0) {
-          dispatch(addUser(...Object.values(response.data)));
+        if(response.status === 200){
+          dispatch(addUser(response.data.data.user_info));
         }
       })
       .catch((error) => console.log(error));
   }
 
-  return (
-    <div>
-      <h1>This is the Home</h1>
-      <h3>Available technicians</h3>
-      {techs &&
-        techs.map((item) => {
-          return !document.cookie.includes(item.email) ? (
-            <div key={item.id}>
-              {item.first_name} {item.last_name} {item.ranking || 0}
-              <button onClick={() => navigate(`/profile/${item.id}`)}>
-                profile
-              </button>
-              <button
-                onClick={() => {
-                  dispatch(addTechnician(item));
-                  getSkills(item.id, http, dispatch, skillsArr, addSkills);
-                  dispatch(showBookingModal(true));
-                }}
-              >
-                book
-              </button>
-            </div>
-          ) : (
-            ""
-          );
-        })}
+  const displayModal = (technician) => {
+    setSelectedTechnician(technician);
+    dispatch(showBookingModal(true));
+  };
 
-      <ModalStructure
-        children={<BookModal />}
-        reducer={"bookingModal"}
-        action={showBookingModal}
-      />
-      <ModalStructure
-        children={<RequestJobModal />}
-        reducer={"messagesModal"}
-        action={showMessagesModal}
-      />
-      <ModalStructure
-        children={<SuccessModal />}
-        reducer={"successModal"}
-        action={showSuccessModal}
-      />
-    </div>
+  const callToActions = {
+    showModal: displayModal,
+    navigation: navigate,
+  };
+
+  return (
+    <Container>
+      <StyledHome>
+        <h1>Available technicians</h1>
+        <StyledListContainer>
+          {technicians &&
+            technicians.length > 0 &&
+            technicians.map((item) => {
+              return (
+                <TechnicianCard
+                  {...item}
+                  key={item.id}
+                  callToActions={callToActions}
+                />
+              );
+            })}
+        </StyledListContainer>
+        {bookingModal && (
+          <ModalLayout
+            title={"Contact Request"}
+            children={<BookModal {...selectedTechnician} />}
+            action={showBookingModal}
+          />
+        )}
+      </StyledHome>
+    </Container>
   );
 };
 

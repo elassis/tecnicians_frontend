@@ -5,9 +5,12 @@ import Link from "../Link/Link";
 import Button from "../Button/Button";
 import Text from "../Text/Text";
 import { SITE_TITLE } from "../../constants/titles";
+import { useSelector } from "react-redux";
 
-function SideBar({ urls, marginLeft, showSideBar }) {
+function SideBar({ urls, marginLeft, showSideBar, logout, myProfile }) {
   const { loginUrl, signUpUrl } = urls;
+  const { user } = useSelector((state) => state);
+
   return (
     <StyledSideBar $marginLeft={marginLeft}>
       <div className="sidebar-header">
@@ -20,8 +23,18 @@ function SideBar({ urls, marginLeft, showSideBar }) {
         />
       </div>
       <div className="buttons-section">
-        <Link url={signUpUrl} children={"Sign up"} />
-        <Link url={loginUrl} children={"Login"} />
+        {!user.hasOwnProperty("id") && (
+          <>
+            <Link url={signUpUrl} children={"Sign up"} />
+            <Link url={loginUrl} children={"Login"} />
+          </>
+        )}
+        {user && user.hasOwnProperty("id") && (
+          <>
+            <Button callBack={logout}>Logout</Button>
+            <Button callBack={myProfile}>My profile</Button>
+          </>
+        )}
       </div>
     </StyledSideBar>
   );

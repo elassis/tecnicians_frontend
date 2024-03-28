@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { PURGE } from "redux-persist";
 
 const initialState = {
   tech: {},
-  skills: {},
-  selectedSkill: ""
+  professions: {},
+  selectedProfession: ""
 };
 
 const technicianSlice = createSlice({
@@ -13,16 +14,21 @@ const technicianSlice = createSlice({
     addTechnician: (state, action) => {
       state.tech = action.payload;
     },
-    addSkills: (state, action) => {
+    addProfession: (state, action) => {
       state.skills = action.payload;
     },
-    selectedSkill: (state, action) => {
+    selectedProfession: (state, action) => {
       state.selectedSkill = action.payload;
     },
   },
+  extraReducers:(builder) => {
+    builder.addCase(PURGE, (state) => {
+      return initialState;
+    })
+  }
 });
 
 
 
-export const { addTechnician, addSkills, selectedSkill } = technicianSlice.actions;
+export const { addTechnician, addProfession, selectedProfession } = technicianSlice.actions;
 export default technicianSlice;

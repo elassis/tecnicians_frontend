@@ -2,14 +2,30 @@ import React from "react";
 import PropTypes from "prop-types";
 import { StyledButton } from "./ButtonStyles";
 
-function Button({ children, textColor, backgroundColor, callBack }) {
+function Button({
+  icon,
+  children,
+  textColor,
+  className,
+  backgroundColor,
+  callBack,
+}) {
   return (
     <StyledButton
       onClick={callBack}
+      className={className}
       $backgroundColor={backgroundColor}
       $textColor={textColor}
     >
-      {children}
+      {icon !== null ? (
+        <>
+          {" "}
+          {children}
+          {icon}{" "}
+        </>
+      ) : (
+        <>{children}</>
+      )}
     </StyledButton>
   );
 }
@@ -19,12 +35,16 @@ Button.propTypes = {
   backgroundColor: PropTypes.string,
   textColor: PropTypes.string,
   callBack: PropTypes.func,
+  className: PropTypes.string,
+  icon: PropTypes.any,
 };
 
 Button.defaultProps = {
   backgroundColor: "#00994c",
   textColor: "#ffffff",
   callBack: () => {},
+  className: null,
+  icon: null,
 };
 
 export default Button;

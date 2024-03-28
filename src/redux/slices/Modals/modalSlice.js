@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { PURGE } from "redux-persist";
 
 const initialState = {
   bookingModal: false,
-  messagesModal: false,
-  successModal: false,
+  editInfoModal: false,
+  editProfessionsModal: false,
   rankingModal: false,
+  jobsModal: false,
 };
 
 export const modalsSlice = createSlice({
@@ -15,22 +16,30 @@ export const modalsSlice = createSlice({
     showBookingModal: (state, action) => {
       state.bookingModal = action.payload;
     },
-    showMessagesModal: (state, action) => {
-      state.messagesModal = action.payload;
+    showEditProfessionsModal: (state, action) => {
+      state.editProfessionsModal = action.payload;
     },
-    showSuccessModal: (state, action) => {
-      state.successModal = action.payload;
+    showEditInfoModal: (state, action) => {
+      state.editInfoModal = action.payload;
+    },
+    showJobsModal: (state, action) => {
+      state.jobsModal = action.payload;
     },
     showRankingModal: (state, action) => {
       state.rankingModal = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(PURGE, (state) => {
+      return initialState;
+    });
+  },
 });
 
-
-
-
-export const { showBookingModal, showSuccessModal, showMessagesModal, showRankingModal } = modalsSlice.actions;
-
-
-
+export const {
+  showBookingModal,
+  showEditInfoModal,
+  showEditProfessionsModal,
+  showRankingModal,
+  showJobsModal,
+} = modalsSlice.actions;

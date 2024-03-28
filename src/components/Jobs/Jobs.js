@@ -6,7 +6,7 @@ import { RANKING_INDEX_API } from "../../apis/rankingsApi";
 import http from "../../axiosRequest";
 import { showRankingModal } from "../../redux/slices/Modals/modalSlice";
 import RankingModal from "../Modals/RankingModal";
-import ModalStructure from "../Modals/ModalStructure";
+import ModalLayout from "../../common/Layout/ModalLayout/ModalLayout";
 
 function Jobs() {
   const { id } = useParams();
@@ -124,7 +124,7 @@ function Jobs() {
       <Options />
       <MssgStructure data={option} />
 
-      <ModalStructure
+      <ModalLayout
         children={<RankingModal {...jobObject} />}
         reducer={"rankingModal"}
         action={showRankingModal}

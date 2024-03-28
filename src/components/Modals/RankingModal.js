@@ -25,7 +25,6 @@ const RankingModal = (props) => {
       .then((response) => {
         if (response.status === 201) {
           dispatch(showRankingModal(false));
-          dispatch(showSuccessModal(true));
         }
       })
       .catch((error) => console.log(error));

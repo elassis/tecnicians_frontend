@@ -8,6 +8,7 @@ import Button from "../../common/components/Button/Button";
 import { StyledLogin } from "./LoginStyles";
 import { useDevice } from "../../common/hooks/useDevice";
 import { setErrors } from "../../redux/slices/Errors/errorsSlice";
+import { Container } from "../../common/Layout/Container";
 
 function Login() {
   const {
@@ -25,7 +26,7 @@ function Login() {
 
   const dispatch = useDispatch();
 
-  const formErrors = useSelector((state) => state.errors.errors);
+  const formErrors = useSelector((state) => state.errors.stateErrors || []);
 
   useEffect(() => {
     if (Object.keys(formErrors).length > 0) {
@@ -59,34 +60,36 @@ function Login() {
       .catch((error) => dispatch(setErrors(error.response.data.errors)));
   }
   return (
-    <StyledLogin $isMobile={isMobile}>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit(send)}>
-        <Input
-          name={"email"}
-          errors={errors}
-          control={control}
-          placeholder="Email"
-          onChange={handleInputChange}
-          type="email"
-          {...register("email", {
-            required: true,
-          })}
-        />
-        <Input
-          name={"password"}
-          control={control}
-          errors={errors}
-          placeholder="Password"
-          onChange={handleInputChange}
-          type="password"
-          {...register("password", {
-            required: true,
-          })}
-        />
-        <Button>Login</Button>
-      </form>
-    </StyledLogin>
+    <Container>
+      <StyledLogin $isMobile={isMobile}>
+        <h1>Login</h1>
+        <form onSubmit={handleSubmit(send)}>
+          <Input
+            name={"email"}
+            errors={errors}
+            control={control}
+            placeholder="Email"
+            onChange={handleInputChange}
+            type="email"
+            {...register("email", {
+              required: true,
+            })}
+          />
+          <Input
+            name={"password"}
+            control={control}
+            errors={errors}
+            placeholder="Password"
+            onChange={handleInputChange}
+            type="password"
+            {...register("password", {
+              required: true,
+            })}
+          />
+          <Button>Login</Button>
+        </form>
+      </StyledLogin>
+    </Container>
   );
 }
 

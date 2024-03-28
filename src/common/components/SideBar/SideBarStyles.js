@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { green100 } from "../../constants/colors";
+import { green100, white100 } from "../../constants/colors";
 
 export const StyledSideBar = styled.div`
   width: 300px;
@@ -32,9 +32,17 @@ export const StyledSideBar = styled.div`
     flex-direction: column;
     gap:15px;
 
-    > a {
+    > a, button {
       text-decoration: none;
       color: ${green100};
     }
+     > button {
+      width:75px;
+      padding:0;
+      margin:8px 0 0 0;
+      text-align:left;
+      background-color:${white100};
+      font-size:16px;
+     }
   }
 `;

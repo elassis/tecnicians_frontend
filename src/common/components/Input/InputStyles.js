@@ -6,5 +6,6 @@ export const StyledInput = styled.input`
   border:1px solid #eee;
   border-radius:16px;
   box-sizing:border-box;
+  
 
 `;

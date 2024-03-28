@@ -1,7 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { PURGE } from "redux-persist";
 
 const initialState = {
-  errors: [],
+  stateErrors: [],
 };
 
 export const errorsSlice = createSlice({
@@ -9,8 +10,13 @@ export const errorsSlice = createSlice({
   initialState,
   reducers: {
     setErrors: (state, action) => {
-      state.errors = action.payload;
+      state.stateErrors = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(PURGE, (state) => {
+      return initialState;
+    });
   },
 });
 

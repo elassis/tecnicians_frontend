@@ -6,11 +6,27 @@ import { red100 } from "../../constants/colors";
 
 const forwardedInput = React.forwardRef(Input);
 
-function Input({ type, checked, name, control, placeholder, errors, onChange, onClick, className }, ref) {
+function Input(
+  {
+    type,
+    defaultValue,
+    disabled,
+    checked,
+    name,
+    control,
+    placeholder,
+    errors,
+    onChange,
+    onClick,
+    className,
+  },
+  ref
+) {
   return (
     <div className={className}>
       <StyledInput
         ref={ref}
+        defaultValue={defaultValue}
         control={control}
         type={type}
         name={name}
@@ -18,6 +34,7 @@ function Input({ type, checked, name, control, placeholder, errors, onChange, on
         onClick={onClick}
         onChange={onChange}
         placeholder={placeholder}
+        disabled={disabled}
       />
       {errors && errors[name] && (
         <Text textColor={red100}>
@@ -37,6 +54,8 @@ Input.propTypes = {
   onClick: PropTypes.func,
   ref: PropTypes.string,
   control: PropTypes.any,
+  defaultValue: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 Input.defaultProps = {
@@ -46,6 +65,8 @@ Input.defaultProps = {
   onClick: null,
   ref: null,
   control: null,
+  defaultValue: null,
+  disabled: false,
 };
 
 export default forwardedInput;

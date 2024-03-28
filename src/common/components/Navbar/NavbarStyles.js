@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { green100, white100 } from "../../common/constants/colors";
+import { green100, white100 } from "../../constants/colors";
 
 export const StyledNavbar = styled.nav`
   width: auto;
@@ -21,13 +21,14 @@ export const StyledNavbar = styled.nav`
       display: flex;
       gap: 10px;
 
-      > a {
+      > a, button {
         text-decoration: none;
         color: ${white100};
         font-size: 14px;
 
         &:hover {
           text-decoration: underline;
+          cursor:pointer;
         }
       }
     }
