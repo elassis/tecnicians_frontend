@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import Text from "../../../common/components/Text/Text";
 import Tag from "../../../common/components/Tag/Tag";
 import { StyledEditProfessionsModal } from "./EditProfessionModalStyles";
 import Button from "../../../common/components/Button/Button";
@@ -11,7 +10,7 @@ import {
   DELETE_TECH_PROFESSION,
   SAVE_TECH_PROFESSION,
 } from "../../../apis/techProfessionsApi";
-import { deleteData, fetchData, storeData } from "../../../apis/ApiActions";
+import { deleteData, storeData } from "../../../apis/ApiActions";
 import { fetchProfessions } from "../../../redux/slices/Profession/professionSlice";
 import ProfessionSelect from "../../../common/components/ProfessionSelect/ProfessionSelect";
 import { useForm } from "react-hook-form";
@@ -19,7 +18,7 @@ import { setSelectAmount } from "../../../redux/slices/SignUp/signUpSlice";
 import { addProfessionSelect, formatPayload } from "../../../common/utils";
 import { addTechnician } from "../../../redux/slices/Technician/technicianSlice";
 
-const EditProfessionModal = ({ user_professions }) => {
+const EditProfessionModal = ({ userProfessions }) => {
   const {
     register,
     unregister,
@@ -63,9 +62,9 @@ const EditProfessionModal = ({ user_professions }) => {
 
   return (
     <StyledEditProfessionsModal>
-      {user_professions &&
-        user_professions.length > 0 &&
-        user_professions.map((prof) => {
+      {userProfessions &&
+        userProfessions.length > 0 &&
+        userProfessions.map((prof) => {
           return (
             <div className="profession-row" key={prof.id}>
               <Tag key={prof.id}>{`${prof.name} - ${prof.price}`}</Tag>

@@ -18,6 +18,8 @@ import { StyledSignUp } from "./SignUpStyles";
 import ProfessionSelect from "../../common/components/ProfessionSelect/ProfessionSelect";
 import { addProfessionSelect } from "../../common/utils";
 import { setSelectAmount } from "../../redux/slices/SignUp/signUpSlice";
+import { storeData } from "../../apis/ApiActions";
+import { setErrors } from "../../redux/slices/Errors/errorsSlice";
 
 const SignUp = () => {
   const {
@@ -31,7 +33,9 @@ const SignUp = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [response, setResponse] = useState(null);
   const { professions } = useSelector((state) => state.professions);
+  const { user } = useSelector((state) => state);
   const { cities } = useSelector((state) => state.cities);
   const { selectAmount } = useSelector((state) => state.signUp);
   const [infoTech, setInfoTech] = useState(false);
@@ -42,99 +46,45 @@ const SignUp = () => {
     dispatch(fetchProfessions());
   }, [dispatch]);
 
-  async function login(email, password) {
-    http
-      .post("/login", {
-        email: email,
-        password: password,
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          navigate("/home");
-        }
-      })
-      .catch((error) => console.log(error));
-  }
+  useEffect(() => {
+    if (user.email) {
+      document.cookie = `user_email=${user.email}`;
+      navigate("/home");
+    }
+  }, [user]);
 
-  async function send(data) {
-    http
-      .post(SAVE_USER_API, {
-        first_name: data.first_name,
-        last_name: data.last_name,
-        identification: data.identification,
-        cellphone: data.cellphone,
-        email: data.email,
-        password: data.password,
-      })
-      .then((response) => {
-        if (response.status === 201) {
-          const userObj = {
-            id: response.data.id,
-            email: response.data.email,
-            password: response.data.password,
-          };
-          document.cookie = `user_email=${userObj.email}`;
-          dispatch(addUser(userObj));
-          saveAddress(response.data.id, data);
-        } else {
-          console.log("user not saved");
-        }
-      })
-      .catch((error) => console.log(error));
-  }
-
-  const saveAddress = (id, data) => {
-    http
-      .post(SAVE_ADDRESS_API, {
-        user_id: id,
-        city_id: data.city,
-        street: data.street,
-        sector: data.sector,
-        number: data.number,
-      })
-      .then((response) => {
-        let cookie = document.cookie;
-        response.status === 201 && cookie.search("XSRF-TOKEN") !== -1
-          ? infoTech
-            ? saveTechnician(id, data)
-            : login(data.email, data.password)
-          : console.log("address not saved");
-      })
-      .catch((error) => console.log(error));
+  const addUserHandler = (data) => {
+    dispatch(addUser(data.user.user_info));
   };
 
-  const saveTechnician = (id, data) => {
-    http
-      .post(SAVE_TECHNICIAN, {
-        user_id: id,
-      })
-      .then((response) => {
-        if (response.status === 201) {
-          saveProfessions(response.data.id, data);
-        }
-      })
-      .catch((error) => console.log(error));
+  const actions = {
+    success: addUserHandler,
+    failure: setErrors,
+    responseChange: setResponse,
   };
 
-  const saveProfessions = (id, data) => {
-    const result = saveTechnicianProfessions(id, data);
-    let existError = false;
-    //TODO - refactor this is making a request repeatedly
-    for (let prof in result) {
-      http
-        .post(SAVE_TECH_PROFESSION, {
-          technician_id: id,
-          profession_id: result[prof]["profession"],
-          price_hour: result[prof]["price"],
-        })
-        .catch((error) => {
-          existError = true;
-          console.log(error);
-        });
+  const send = async (data) => {
+    let techArr = [];
+    //subtract professions
+    if (selectAmount.length > 0) {
+      selectAmount.map((item) => {
+        let profObj = {
+          profession_id: data[item.selectName],
+          price_hour: data[item.inputName],
+        };
+        techArr.push(profObj);
+      });
     }
-    if (!existError) {
-      login(data.email, data.password);
-    }
+
+    const dataToStore = {
+      ...data,
+      city_id: data.city,
+      professions: techArr,
+      type: techArr.length > 0 ? "technician" : "client",
+    };
+    
+    await http.get("/sanctum/csrf-cookie");
+    storeData(SAVE_USER_API, dataToStore, dispatch, actions);
   };
 
   const handleInputChange = async (e) => {
@@ -271,9 +221,16 @@ const SignUp = () => {
             checked={infoTech}
             type="checkbox"
             onChange={() => {
-              setInfoTech(!infoTech);
-              if (infoTech && selectAmount.length < 1) {
+              setInfoTech((prevState) => !prevState);
+              if (!infoTech && selectAmount.length < 1) {
                 addProfessionSelect(dispatch, setSelectAmount);
+              }
+              if (infoTech) {
+                selectAmount.forEach((item) => {
+                  unregister(item.selectName);
+                  unregister(item.inputName);
+                });
+                dispatch(setSelectAmount([]));
               }
             }}
           />
@@ -298,10 +255,7 @@ const SignUp = () => {
                     selectName={item.selectName}
                     selectValue={item.selectedValue}
                     className={"profession_wrapper"}
-                    items={[
-                      { ...defaultOption, name: "Select a profession" },
-                      ...professions,
-                    ]}
+                    items={[...professions]}
                   />
                 );
               })}

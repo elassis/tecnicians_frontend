@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -7,8 +7,10 @@ import Input from "../../common/components/Input/Input";
 import Button from "../../common/components/Button/Button";
 import { StyledLogin } from "./LoginStyles";
 import { useDevice } from "../../common/hooks/useDevice";
-import { setErrors } from "../../redux/slices/Errors/errorsSlice";
 import { Container } from "../../common/Layout/Container";
+import { fetchData } from "../../apis/ApiActions";
+import { addUser } from "../../redux/slices/User/userSlice";
+import { FETCH_USER_DATA } from "../../apis/usersApi";
 
 function Login() {
   const {
@@ -18,14 +20,15 @@ function Login() {
     setError,
     triggerValidation,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: { email: "elp_07@hotmail.com", password: "rosa1007" },
+  });
 
   const navigate = useNavigate();
-
-  const { isMobile } = useDevice();
-
   const dispatch = useDispatch();
-
+  const { isMobile } = useDevice();
+  const [response, setResponse] = useState(null);
+  const [email, setEmail] = useState(null);
   const formErrors = useSelector((state) => state.errors.stateErrors || []);
 
   useEffect(() => {
@@ -39,26 +42,40 @@ function Login() {
     }
   }, [formErrors, setError]);
 
+  useEffect(() => {
+    if (response?.status === 200) {
+      document.cookie = `user_email=${email}`;
+      localStorage.setItem("user_email", email);
+      setUser(email);
+      navigate("/home");
+    }
+  }, [response, email]);
+
   const handleInputChange = async (e) => {
     await triggerValidation(e.target.name);
   };
 
-  async function send(data) {
+  const addUserHandler = (data) => {
+    dispatch(addUser(data.user_info));
+  };
+
+  //TODO - this should use the apirequests actions
+  const send = async (data) => {
     await http.get("/sanctum/csrf-cookie");
     http
-      .post("/login", {
-        email: data.email,
-        password: data.password,
-      })
+      .post("/login", data)
       .then((response) => {
-        if (response.status === 200) {
-          document.cookie = `user_email=${data.email}`;
-          localStorage.setItem("user_email", data.email);
-          navigate("/home");
-        }
+        setEmail(data.email);
+        setResponse(response);
       })
-      .catch((error) => dispatch(setErrors(error.response.data.errors)));
-  }
+      .catch((error) => console.log(error));
+  };
+
+  const setUser = (email) => {
+    const url = FETCH_USER_DATA.replace("{email}", email);
+    fetchData(url, dispatch, addUserHandler);
+  };
+
   return (
     <Container>
       <StyledLogin $isMobile={isMobile}>

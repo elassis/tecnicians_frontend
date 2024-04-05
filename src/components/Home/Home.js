@@ -8,7 +8,6 @@ import {
 } from "../../redux/slices/Modals/modalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import BookModal from "../Modals/BookModal/BookModal";
-import { addUser } from "../../redux/slices/User/userSlice";
 import { StyledHome } from "./HomeStyles";
 import { Container } from "../../common/Layout/Container";
 import { StyledListContainer } from "../../common/Layout/StyledList";
@@ -27,21 +26,7 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(fetchTechnicians());
-    setUserOnState();
   }, []);
-
-  //TODO - state should keep user on state, this function shouldn't be needed
-  async function setUserOnState() {
-    const savedEmail = localStorage.getItem("user_email");
-    await http
-      .get(`/api/user/${savedEmail}`)
-      .then((response) => {
-        if(response.status === 200){
-          dispatch(addUser(response.data.data.user_info));
-        }
-      })
-      .catch((error) => console.log(error));
-  }
 
   const displayModal = (technician) => {
     setSelectedTechnician(technician);

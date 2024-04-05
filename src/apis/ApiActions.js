@@ -1,5 +1,6 @@
 import http from "../axiosRequest";
 
+//THOSE FUNCTIONS MUST BE REFACTOR - shouldn't use dispatch here
 export const storeData = async (url, data, dispatch, actions) => {
   http
     .post(url, data)

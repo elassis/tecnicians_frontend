@@ -16,6 +16,7 @@ const TechnicianCard = ({
   callToActions,
   id,
   email,
+  user_id,
 }) => {
 
   const technicianData = {
@@ -53,7 +54,7 @@ const TechnicianCard = ({
           </div>
         </div>
         <div className="buttons-area">
-          <Button callBack={() => callToActions.navigation(`/profile/${id}`)}>
+          <Button callBack={() => callToActions.navigation(`/profile/${user_id}`)}>
             Profile
           </Button>
           <Button callBack={() => callToActions.showModal(technicianData)}>Contact</Button>

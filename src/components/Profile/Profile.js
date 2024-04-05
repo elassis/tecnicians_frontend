@@ -35,7 +35,7 @@ function Profile() {
   );
   const { user } = useSelector((state) => state);
   const isThereFeeback = (job) => job.status === "completed";
-  const isUserOwner = isOwner(tech?.user_info?.id, user?.id)
+  const isUserOwner = isOwner(tech?.user_info?.user_id, user?.id)
 
   //TODO - REFACTOR THIS USER SHOULD BE FETCH FROM STATE
   async function getProfileData() {
@@ -74,14 +74,14 @@ function Profile() {
           <Text
             className={"name"}
             weight={"700"}
-            children={`${tech.user_info?.first_name} ${tech.user_info?.last_name}`}
+            children={`${tech?.user_info?.first_name} ${tech?.user_info?.last_name}`}
           />
           {isUserOwner && (
-            <Text className={"email"} children={`${tech.user_info?.email}`} />
+            <Text className={"email"} children={`${tech?.user_info?.email}`} />
           )}
-          {tech.user_info?.type !== "client" && (
+          {tech?.user_info?.type !== "client" && (
             <StarRatings
-              rating={tech.user_info?.rankingAvg}
+              rating={tech?.user_info?.rankingAvg}
               starDimension="15px"
               starSpacing="15px"
               starRatedColor="#ccc000"
@@ -89,13 +89,13 @@ function Profile() {
           )}
           <Text
             children={`member since: ${formatDate(
-              tech.user_info?.registered_since
+              tech?.user_info?.registered_since
             )}`}
           />
           {isUserOwner && (
             <Text
               className={"address"}
-              children={`#${tech.user_info?.address?.number} ${tech.user_info?.address?.street}, ${tech.user_info?.address?.sector}, ${tech.user_info?.address?.city}`}
+              children={`#${tech?.user_info?.address?.number} ${tech?.user_info?.address?.street}, ${tech?.user_info?.address?.sector}, ${tech?.user_info?.address?.city}`}
             />
           )}
         </div>
@@ -111,7 +111,7 @@ function Profile() {
         <div className="first-col professional-col">
           <Text {...TitleProps} children={"Professional info"} />
           <div className="prof-tags">
-            {tech.user_info?.professions?.map((prof) => {
+            {tech?.user_info?.professions?.map((prof) => {
               return (
                 <Tag key={prof.id} children={`${prof.name} - ${prof.price}`} />
               );
@@ -127,11 +127,11 @@ function Profile() {
       <StyledSection display={tech?.user_info?.type !== "client"}>
         <div className="first-col feedback-col">
           <Text {...TitleProps} children={"Jobs & Feedback"} />
-          {tech.jobs?.length > 0 && (
+          {tech?.jobs?.length > 0 && (
             <JobFeedback defaultTab={"feedback"} jobs={tech.jobs} />
           )}
         </div>
-      </StyledSection>
+      </StyledSection> 
       {editInfoModal && (
         <ModalLayout
           title={"Edit Info"}
@@ -144,7 +144,7 @@ function Profile() {
           title={"Edit Professions"}
           children={
             <EditProfessionModal
-              user_professions={tech.user_info.professions}
+              userProfessions={tech?.user_info?.professions}
             />
           }
           action={showEditProfessionsModal}
