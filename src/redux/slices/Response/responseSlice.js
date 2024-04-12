@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { PURGE } from "redux-persist";
 
-
 const initialState = {
   response: {},
 };
@@ -14,14 +13,11 @@ export const responseSlice = createSlice({
       state.response = action.payload;
     },
   },
-  extraReducers:(builder) => {
+  extraReducers: (builder) => {
     builder.addCase(PURGE, (state) => {
       return initialState;
-    })
-  }
+    });
+  },
 });
-
-
-
 
 export const { setResponse } = responseSlice.actions;

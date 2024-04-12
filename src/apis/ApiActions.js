@@ -1,50 +1,44 @@
 import http from "../axiosRequest";
+import { setErrors } from "../redux/slices/Errors/errorsSlice";
 
-//THOSE FUNCTIONS MUST BE REFACTOR - shouldn't use dispatch here
-export const storeData = async (url, data, dispatch, actions) => {
+export const storeData = async (url, data, dispatch, responseAction) => {
   http
     .post(url, data)
     .then((response) => {
-      dispatch(actions.success(response.data.data));
-      actions.responseChange(response.status);
+      const responseObj = { data: response.data, status: response.status };
+      dispatch(responseAction(responseObj));
     })
     .catch((error) => {
-      dispatch(actions.failure(error.message));
-      actions.responseChange(error.message);
+      dispatch(setErrors(error.message));
     });
 };
 
-export const fetchData = async (url, dispatch, action) => {
+export const fetchData = async (url, dispatch, responseAction) => {
   http
     .get(url)
     .then((response) => {
-      dispatch(action(response.data.data));
+      const responseObj = { data: response.data, status: response.status };
+      dispatch(responseAction(responseObj));
     })
-    .catch((error) => console.log(error.message));
+    .catch((error) => dispatch(setErrors(error.message)));
 };
 
-export const updateData = async (url, data, dispatch, actions) => {
+export const updateData = async (url, data, dispatch, responseAction) => {
   http
     .put(url, data)
     .then((response) => {
-      dispatch(actions.success(response.data.data));
-      actions.responseChange(response.status);
+      const responseObj = { data: response.data, status: response.status };
+      dispatch(responseAction(responseObj));
     })
-    .catch((error) => {
-      dispatch(actions.failure(error.message));
-      actions.responseChange(error.message);
-    });
+    .catch((error) => dispatch(setErrors(error.message)));
 };
 
-export const deleteData = async (url, dispatch, actions) => {
+export const deleteData = async (url, dispatch, responseAction) => {
   http
     .delete(url)
     .then((response) => {
-      dispatch(actions.success(response.data.data));
-      actions.responseChange(response.status);
+      const responseObj = { data: response.data, status: response.status };
+      dispatch(responseAction(responseObj));
     })
-    .catch((error) => {
-      dispatch(actions.failure(error.message));
-      actions.responseChange(error.message);
-    });
+    .catch((error) => dispatch(setErrors(error.message)));
 };

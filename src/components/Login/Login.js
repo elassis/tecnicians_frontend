@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -8,9 +8,12 @@ import Button from "../../common/components/Button/Button";
 import { StyledLogin } from "./LoginStyles";
 import { useDevice } from "../../common/hooks/useDevice";
 import { Container } from "../../common/Layout/Container";
-import { fetchData } from "../../apis/ApiActions";
+import { fetchData, storeData } from "../../apis/ApiActions";
 import { addUser } from "../../redux/slices/User/userSlice";
 import { FETCH_USER_DATA } from "../../apis/usersApi";
+import {
+  setResponse,
+} from "../../redux/slices/Response/responseSlice";
 
 function Login() {
   const {
@@ -27,9 +30,9 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isMobile } = useDevice();
-  const [response, setResponse] = useState(null);
-  const [email, setEmail] = useState(null);
+  const email = useRef(null);
   const formErrors = useSelector((state) => state.errors.stateErrors || []);
+  const { response } = useSelector((state) => state.response);
 
   useEffect(() => {
     if (Object.keys(formErrors).length > 0) {
@@ -43,37 +46,35 @@ function Login() {
   }, [formErrors, setError]);
 
   useEffect(() => {
-    if (response?.status === 200) {
+    if (response.status === 200 && response.data.length > 1) {
       document.cookie = `user_email=${email}`;
       localStorage.setItem("user_email", email);
-      setUser(email);
-      navigate("/home");
+      setUser(email.current);
     }
-  }, [response, email]);
+
+    if(response?.data?.status === 202){
+      addUserHandler(response);
+    }
+  }, [response]);
 
   const handleInputChange = async (e) => {
     await triggerValidation(e.target.name);
   };
 
   const addUserHandler = (data) => {
-    dispatch(addUser(data.user_info));
+    dispatch(addUser(data.data.data.user_info));
+    navigate("/home");
   };
 
-  //TODO - this should use the apirequests actions
   const send = async (data) => {
+    email.current = data.email;
     await http.get("/sanctum/csrf-cookie");
-    http
-      .post("/login", data)
-      .then((response) => {
-        setEmail(data.email);
-        setResponse(response);
-      })
-      .catch((error) => console.log(error));
+    storeData("/login", data, dispatch, setResponse);
   };
 
   const setUser = (email) => {
     const url = FETCH_USER_DATA.replace("{email}", email);
-    fetchData(url, dispatch, addUserHandler);
+    fetchData(url, dispatch, setResponse);
   };
 
   return (

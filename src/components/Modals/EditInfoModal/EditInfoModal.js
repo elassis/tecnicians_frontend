@@ -9,10 +9,10 @@ import { fetchCities } from "../../../redux/slices/City/citySlice";
 import { StyledModal } from "./EditInfoModalStyles";
 import { updateData } from "../../../apis/ApiActions";
 import { UPDATE_USER_DATA } from "../../../apis/usersApi";
-import { addTechnician } from "../../../redux/slices/Technician/technicianSlice";
-import { setErrors } from "../../../redux/slices/Errors/errorsSlice";
+import { setResponse } from "../../../redux/slices/Response/responseSlice";
 import ResponseModal from "../SuccessModal";
 import { showEditInfoModal } from "../../../redux/slices/Modals/modalSlice";
+import { addTechnician } from "../../../redux/slices/Technician/technicianSlice";
 
 const EditInfoModal = ({ id, first_name, last_name, email, address, type }) => {
   const {
@@ -24,8 +24,9 @@ const EditInfoModal = ({ id, first_name, last_name, email, address, type }) => {
   } = useForm();
 
   const { cities } = useSelector((state) => state.cities);
+  const { status } = useSelector(state => state.technician.tech.data);
   const [orderedCities, setOrderedCities] = useState(null);
-  const [response, setResponse] = useState(null);
+  const [showResponseModal, setShowResponseModal] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -34,13 +35,13 @@ const EditInfoModal = ({ id, first_name, last_name, email, address, type }) => {
   }, []);
 
   useEffect(() => {
-    if (response !== null) {
+    if (showResponseModal) {
       const timer = setTimeout(() => {
         dispatch(showEditInfoModal(false));
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [response]);
+  }, [showResponseModal]);
 
   useMemo(() => {
     if (cities && cities.length > 0) {
@@ -53,17 +54,13 @@ const EditInfoModal = ({ id, first_name, last_name, email, address, type }) => {
 
   const send = (data) => {
     const url = UPDATE_USER_DATA.replace("{id}", id);
-    const actions = {
-      failure: setErrors,
-      success: addTechnician,
-      responseChange: setResponse,
-    };
-
+  
     if (data.city_id.length < 1) data.city_id = orderedCities[0].id;
 
     data['type'] = type;
 
-    updateData(url, data, dispatch, actions);
+    updateData(url, data, dispatch, addTechnician);
+    setShowResponseModal(true);
   };
 
   const handleInputChange = async (e) => {
@@ -72,8 +69,8 @@ const EditInfoModal = ({ id, first_name, last_name, email, address, type }) => {
 
   return (
     <StyledModal>
-      {response !== null ? (
-        <ResponseModal response={{ data: response }} />
+      {showResponseModal !== false  && status ? (
+        <ResponseModal response={{ data: status }} />
       ) : (
         <form onSubmit={handleSubmit(send)}>
           <Input

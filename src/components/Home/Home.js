@@ -1,5 +1,4 @@
 import React, { useState }from "react";
-import http from "../../axiosRequest";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ModalLayout from "../../common/Layout/ModalLayout/ModalLayout";
@@ -13,6 +12,7 @@ import { Container } from "../../common/Layout/Container";
 import { StyledListContainer } from "../../common/Layout/StyledList";
 import { fetchTechnicians } from "../../redux/slices/Technicians/TechniciansSlice";
 import TechnicianCard from "../../common/components/TechnicianCard/TechnicianCard";
+import { setResponse } from "../../redux/slices/Response/responseSlice";
 
 const Home = () => {
   const [selectedTechnician, setSelectedTechnician] = useState({});
@@ -26,6 +26,7 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(fetchTechnicians());
+    dispatch(setResponse({}));
   }, []);
 
   const displayModal = (technician) => {

@@ -11,6 +11,7 @@ import { showBookingModal } from "../../../redux/slices/Modals/modalSlice";
 import { storeData } from "../../../apis/ApiActions";
 import { SAVE_JOBS } from "../../../apis/jobsApi";
 import ResponseModal from "../SuccessModal";
+import { setResponse } from "../../../redux/slices/Response/responseSlice";
 
 const DateInputWithLabelHOC = ({ name, text, register, errors, control }) => {
   return (
@@ -38,8 +39,8 @@ const BookModal = ({ id, name, professions }) => {
   } = useForm();
 
   const { user } = useSelector((state) => state);
+  const { response } = useSelector((state) => state.response);
   const [defaultMessage, setDefaultMessage] = useState(null);
-  const [response, setResponse] = useState(null);
   const defaultOption = { id: "default", name: "Select profession" };
   const selectValue = watch("profession_id");
   const dispatch = useDispatch();
@@ -64,7 +65,7 @@ const BookModal = ({ id, name, professions }) => {
   }, [selectValue]);
 
   useEffect(() => {
-    if (response !== null) {
+    if (response.hasOwnProperty("status")) {
       const timer = setTimeout(() => {
         dispatch(showBookingModal(false));
       }, 5000);
@@ -82,7 +83,7 @@ const BookModal = ({ id, name, professions }) => {
       user_id: user.id,
       technician_id: id,
     };
-    storeData(fullInfo, SAVE_JOBS, setResponse);
+    storeData(SAVE_JOBS, fullInfo, dispatch, setResponse);
   };
 
   const handleInputChange = async (e) => {
@@ -91,8 +92,8 @@ const BookModal = ({ id, name, professions }) => {
 
   return (
     <StyledBookModal>
-      {response !== null ? (
-        <ResponseModal response={response} />
+      {response.hasOwnProperty("status") ? (
+        <ResponseModal response={{ data: response.status }} />
       ) : (
         <form onSubmit={handleSubmit(sendFormData)}>
           <Input

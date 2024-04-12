@@ -21,11 +21,11 @@ const JobFeedback = (props) => {
   const [selectedTab, setSelectedTab] = useState(defaultTab);
   const pendingJobs = jobs.filter((job) => job.status === "pending");
   const { user } = useSelector((state) => state);
-  const { tech } = useSelector((state) => state.technician);
+  const { user_info } = useSelector((state) => state.technician.tech.data.data);
   const JobsList = withList(Job);
   const FeedbackList = withList(Feedback);
 
-  const isUserOwner = isOwner(user.id, tech.user_info.id);
+  const isUserOwner = isOwner(user.id, user_info.id);
 
   return (
     <StyledJobFeedback>

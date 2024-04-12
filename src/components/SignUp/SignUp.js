@@ -1,16 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import http from "../../axiosRequest";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { SAVE_USER_API } from "../../apis/registerApi";
-import { SAVE_TECHNICIAN } from "../../apis/techniciansApi";
-import { SAVE_ADDRESS_API } from "../../apis/addressApi";
-import { SAVE_TECH_PROFESSION } from "../../apis/techProfessionsApi";
 import { fetchCities } from "../../redux/slices/City/citySlice";
 import { useNavigate } from "react-router-dom";
 import { addUser } from "../../redux/slices/User/userSlice";
 import { fetchProfessions } from "../../redux/slices/Profession/professionSlice";
-import { saveTechnicianProfessions } from "./signUpActions";
 import Select from "../../common/components/Select/Select";
 import Input from "../../common/components/Input/Input";
 import Button from "../../common/components/Button/Button";
@@ -19,7 +15,6 @@ import ProfessionSelect from "../../common/components/ProfessionSelect/Professio
 import { addProfessionSelect } from "../../common/utils";
 import { setSelectAmount } from "../../redux/slices/SignUp/signUpSlice";
 import { storeData } from "../../apis/ApiActions";
-import { setErrors } from "../../redux/slices/Errors/errorsSlice";
 
 const SignUp = () => {
   const {
@@ -33,7 +28,6 @@ const SignUp = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [response, setResponse] = useState(null);
   const { professions } = useSelector((state) => state.professions);
   const { user } = useSelector((state) => state);
   const { cities } = useSelector((state) => state.cities);
@@ -53,21 +47,11 @@ const SignUp = () => {
     }
   }, [user]);
 
-  const addUserHandler = (data) => {
-    dispatch(addUser(data.user.user_info));
-  };
-
-  const actions = {
-    success: addUserHandler,
-    failure: setErrors,
-    responseChange: setResponse,
-  };
-
   const send = async (data) => {
     let techArr = [];
     //subtract professions
     if (selectAmount.length > 0) {
-      selectAmount.map((item) => {
+      selectAmount.forEach((item) => {
         let profObj = {
           profession_id: data[item.selectName],
           price_hour: data[item.inputName],
@@ -84,7 +68,7 @@ const SignUp = () => {
     };
     
     await http.get("/sanctum/csrf-cookie");
-    storeData(SAVE_USER_API, dataToStore, dispatch, actions);
+    storeData(SAVE_USER_API, dataToStore, dispatch, addUser);
   };
 
   const handleInputChange = async (e) => {

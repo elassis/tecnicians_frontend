@@ -30,7 +30,7 @@ const EditProfessionModal = ({ userProfessions }) => {
   const [response, setResponse] = useState(null);
   const { selectAmount } = useSelector((state) => state.signUp);
   const { professions } = useSelector((state) => state.professions);
-  const { user_info } = useSelector((state) => state.technician.tech);
+  const { user_info } = useSelector((state) => state.technician.tech.data.data);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -52,12 +52,12 @@ const EditProfessionModal = ({ userProfessions }) => {
   const send = (data) => {
     const url = SAVE_TECH_PROFESSION;
     const payload = formatPayload(user_info.id, data);
-    storeData(url, payload, dispatch, actions);
+    storeData(url, payload, dispatch, addTechnician);
   };
 
   const onClickHandler = (id) => {
     const url = DELETE_TECH_PROFESSION.replace("{id}", id);
-    deleteData(url, dispatch, actions);
+    deleteData(url, dispatch, addTechnician);
   };
 
   return (

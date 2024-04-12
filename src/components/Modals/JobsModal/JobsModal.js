@@ -82,7 +82,7 @@ const JobsModal = (props) => {
 
   const actions = {
     success: setResponse,
-    failure: setErrors,
+    failure: setResponse,
     responseChange: setResponseStatus,
   };
 
