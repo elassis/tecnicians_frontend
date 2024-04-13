@@ -20,6 +20,7 @@ const JobFeedback = (props) => {
   const { jobs, defaultTab } = props;
   const [selectedTab, setSelectedTab] = useState(defaultTab);
   const pendingJobs = jobs.filter((job) => job.status === "pending");
+  const completedJobs = jobs.filter((job) => job.status === "completed");
   const { user } = useSelector((state) => state);
   const { user_info } = useSelector((state) => state.technician.tech.data.data);
   const JobsList = withList(Job);
@@ -53,7 +54,7 @@ const JobFeedback = (props) => {
         {selectedTab === "jobs" && pendingJobs.length > 0 && isUserOwner && (
           <JobsList jobs={pendingJobs} />
         )}
-        {selectedTab === "feedback" && <FeedbackList jobs={jobs} />}
+        {selectedTab === "feedback" && <FeedbackList jobs={completedJobs} />}
       </div>
     </StyledJobFeedback>
   );

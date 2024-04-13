@@ -13,8 +13,9 @@ import { setResponse } from "../../../redux/slices/Response/responseSlice";
 import ResponseModal from "../SuccessModal";
 import { showEditInfoModal } from "../../../redux/slices/Modals/modalSlice";
 import { addTechnician } from "../../../redux/slices/Technician/technicianSlice";
+import { useParams } from "react-router-dom";
 
-const EditInfoModal = ({ id, first_name, last_name, email, address, type }) => {
+const EditInfoModal = ({first_name, last_name, email, address, type }) => {
   const {
     handleSubmit,
     control,
@@ -22,7 +23,7 @@ const EditInfoModal = ({ id, first_name, last_name, email, address, type }) => {
     register,
     formState: { errors },
   } = useForm();
-
+  const params = useParams();
   const { cities } = useSelector((state) => state.cities);
   const { status } = useSelector(state => state.technician.tech.data);
   const [orderedCities, setOrderedCities] = useState(null);
@@ -53,7 +54,7 @@ const EditInfoModal = ({ id, first_name, last_name, email, address, type }) => {
   }, [cities]);
 
   const send = (data) => {
-    const url = UPDATE_USER_DATA.replace("{id}", id);
+    const url = UPDATE_USER_DATA.replace("{id}", params.id);
   
     if (data.city_id.length < 1) data.city_id = orderedCities[0].id;
 

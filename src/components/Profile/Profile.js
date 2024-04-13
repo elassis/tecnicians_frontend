@@ -56,7 +56,6 @@ function Profile() {
     getProfileData();
   }, [params.id, user]);
 
-
   return (
     <Container>
       <StyledBackButton>
@@ -78,7 +77,7 @@ function Profile() {
                   starRatedColor="#ccc000"
                 />
               )}
-              <Text children={`member since: ${formatDate(user_info?.registered_since)}`}/>
+              <Text className={"start_date"} children={`member since: ${formatDate(user_info?.registered_since)}`}/>
               {isUserOwner && (<Text className={"address"} children={`#${user_info?.address?.number} ${user_info?.address?.street}, ${user_info?.address?.sector}, ${user_info?.address?.city}`}/>)}
             </>
           }
@@ -111,7 +110,7 @@ function Profile() {
           />
         </>
       )}
-      {editInfoModal && user_info && (
+      {editInfoModal && user && (
         <ModalLayout
           title={"Edit Info"}
           children={<EditInfoModal {...user_info} />}

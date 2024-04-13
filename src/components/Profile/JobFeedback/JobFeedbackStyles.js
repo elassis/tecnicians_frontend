@@ -26,5 +26,11 @@ export const StyledJobFeedback = styled.div`
       color:#fff;
       font-weight:700;
     }
-  }  
+  } 
+
+  .content {
+    width:100%;
+    display:flex;
+    flex-direction:column;
+  }
 `;

@@ -47,8 +47,8 @@ function Login() {
 
   useEffect(() => {
     if (response.status === 200 && response.data.length > 1) {
-      document.cookie = `user_email=${email}`;
-      localStorage.setItem("user_email", email);
+      document.cookie = `user_email=${email.current}`;
+      localStorage.setItem("user_email", email.current);
       setUser(email.current);
     }
 

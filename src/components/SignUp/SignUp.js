@@ -15,6 +15,7 @@ import ProfessionSelect from "../../common/components/ProfessionSelect/Professio
 import { addProfessionSelect } from "../../common/utils";
 import { setSelectAmount } from "../../redux/slices/SignUp/signUpSlice";
 import { storeData } from "../../apis/ApiActions";
+import { setResponse } from "../../redux/slices/Response/responseSlice";
 
 const SignUp = () => {
   const {
@@ -29,7 +30,7 @@ const SignUp = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { professions } = useSelector((state) => state.professions);
-  const { user } = useSelector((state) => state);
+  const { response } = useSelector((state) => state.response);
   const { cities } = useSelector((state) => state.cities);
   const { selectAmount } = useSelector((state) => state.signUp);
   const [infoTech, setInfoTech] = useState(false);
@@ -41,11 +42,13 @@ const SignUp = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (user.email) {
-      document.cookie = `user_email=${user.email}`;
+    if (response?.data?.data?.user_info) {
+      const { user_info } = response.data.data;
+      document.cookie = `user_email=${user_info.email}`;
+      dispatch(addUser(user_info));
       navigate("/home");
     }
-  }, [user]);
+  }, [response]);
 
   const send = async (data) => {
     let techArr = [];
@@ -68,7 +71,7 @@ const SignUp = () => {
     };
     
     await http.get("/sanctum/csrf-cookie");
-    storeData(SAVE_USER_API, dataToStore, dispatch, addUser);
+    storeData(SAVE_USER_API, dataToStore, dispatch, setResponse);
   };
 
   const handleInputChange = async (e) => {

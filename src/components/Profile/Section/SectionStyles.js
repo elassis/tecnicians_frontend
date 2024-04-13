@@ -59,30 +59,22 @@ export const StyledSection = styled.div`
     text-overflow: ellipsis;
     text-transform: capitalize;
   }
-
+  
   @media (min-width: 700px) {
     width: 50%;
     align-items: flex-start;
+    
+    > div > div > .email {
+      margin-bottom:0;
+    }
+
+    > div > div > .start_date { 
+      margin: 0;
+    }
 
     .content {
       display: flex;
       width: 100%;
-    }
-    .feedback-col {
-      width: 100%;
-    }
-
-    .professional-col {
-      width: 100%;
-
-      .prof-tags {
-        margin-top: 15px;
-        display: flex;
-        gap: 10px;
-        p {
-          margin: 0;
-        }
-      }
     }
 
     > div > div > .name {
@@ -93,13 +85,14 @@ export const StyledSection = styled.div`
 
 export const FirstColumn = styled.div`
   @media (min-width: 700px) {
-    width: 20%;
+    min-width: 20%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     text-align: left;
   }
 `;
+
 export const SecondColumn = styled.div`
   @media (min-width: 700px) {
     width: 70%;
@@ -107,6 +100,7 @@ export const SecondColumn = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     text-align: left;
+    gap:10px;
 
     .name{
       margin:0;

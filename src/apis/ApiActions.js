@@ -1,9 +1,9 @@
 import http from "../axiosRequest";
 import { setErrors } from "../redux/slices/Errors/errorsSlice";
 
-export const storeData = async (url, data, dispatch, responseAction) => {
+export const storeData = async (url, info, dispatch, responseAction) => {
   http
-    .post(url, data)
+    .post(url, info)
     .then((response) => {
       const responseObj = { data: response.data, status: response.status };
       dispatch(responseAction(responseObj));

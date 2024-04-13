@@ -24,6 +24,7 @@ export const StyledTechnicianCard = styled.div`
   }
 
   > .img-area {
+    align-items: flex-start;
     height: 180px;
     img {
       width: 130px;
