@@ -46,11 +46,7 @@ function Login() {
   }, [formErrors, setError]);
 
   useEffect(() => {
-    dispatch(setResponse({}));
-  },[])
-
-  useEffect(() => {
-    if ('status' in response && response.status === 200 && response.data.length > 1) {
+    if ('status' in response) {
       document.cookie = `user_email=${email.current}`;
       localStorage.setItem("user_email", email.current);
       setUser(email.current);

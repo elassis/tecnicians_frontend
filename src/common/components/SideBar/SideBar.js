@@ -27,11 +27,12 @@ function SideBar({ urls, marginLeft, showSideBar, logout, myProfile }) {
           <>
             <Link url={signUpUrl} children={"Sign up"} />
             <Link url={loginUrl} children={"Login"} />
+            <Button callBack={logout}>Logout</Button>{/**remove this */}
           </>
         )}
         {user && user.hasOwnProperty("id") && (
           <>
-            <Button callBack={logout}>Logout</Button>
+          <Button callBack={logout}>Logout</Button>
             <Button callBack={myProfile}>My profile</Button>
           </>
         )}
