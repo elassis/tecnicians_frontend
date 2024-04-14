@@ -38,7 +38,7 @@ function Profile() {
   );
   const { user } = useSelector((state) => state);
   const isThereFeeback = (job) => job.status === "completed";
-  const isUserOwner = isOwner(user_info?.user_id ?? user_info.id, user?.id);
+  const isUserOwner = isOwner(user_info?.user_id ?? user_info?.id, user?.id);
 
   async function getProfileData() {
     let url = null;
