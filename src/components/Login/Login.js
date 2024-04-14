@@ -46,6 +46,7 @@ function Login() {
   }, [formErrors, setError]);
 
   useEffect(() => {
+    console.log(response);
     if (response.status === 200 && email.current !== null) {
       document.cookie = `user_email=${email.current}`;
       localStorage.setItem("user_email", email.current);
