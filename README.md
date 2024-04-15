@@ -49,15 +49,6 @@ For more information on the importance of a professional README for your reposit
 </details>
 
 <details>
-  <summary>Server</summary>
-  <ul>
-    <li><a href="https://www.php.net/">PHP</a></li>
-    <li><a href="https://laravel.com/">Laravel</a></li>
-    
-  </ul>
-</details>
-
-<details>
 <summary>Database</summary>
   <ul>
     <li><a href="https://www.mysql.com/">MySQL</a></li>
@@ -71,7 +62,6 @@ For more information on the importance of a professional README for your reposit
 - **User/Technician Registration**
 - **User/Technician Modification**
 - **User/Technician Deletion**
-- **Email Contact Feature using Laravel events**
   
 <!-- LIVE DEMO -->
 
