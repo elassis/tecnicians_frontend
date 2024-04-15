@@ -31,7 +31,7 @@ For more information on the importance of a professional README for your reposit
 
 <!-- PROJECT DESCRIPTION -->
 
-# 📖 TechFreelance <a name="about-project"></a>
+# 📖 TechFreelance (Frontend)
 
 **TechFreelance** is a web application where people who need a handyman or technician can find one and technicians can register to be contacted for a gig.
 
