@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -11,40 +11,31 @@ import { Container } from "../../common/Layout/Container";
 import { fetchData, storeData } from "../../apis/ApiActions";
 import { addUser } from "../../redux/slices/User/userSlice";
 import { FETCH_USER_DATA } from "../../apis/usersApi";
-import {
-  setResponse,
-} from "../../redux/slices/Response/responseSlice";
+import { setResponse } from "../../redux/slices/Response/responseSlice";
+import Text from "../../common/components/Text/Text";
+import { red100 } from "../../common/constants/colors";
+import { ErrorsTypes } from "../../common/utils";
+import { setErrors } from "../../redux/slices/Errors/errorsSlice";
 
 function Login() {
   const {
     register,
     handleSubmit,
     control,
-    setError,
     triggerValidation,
     formState: { errors },
   } = useForm({
-    defaultValues: { email: "elp_07@hotmail.com", password: "rosa1007" },
+    defaultValues: { email: "elp_07@hotmail.com", password: "rosa1007", wrongCredentials: null },
   });
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isMobile } = useDevice();
   const email = useRef(null);
-  const formErrors = useSelector((state) => state.errors.stateErrors || []);
+  const {stateErrors} = useSelector((state) => state.errors);
   const { response } = useSelector((state) => state.response);
 
-  useEffect(() => {
-    if (Object.keys(formErrors).length > 0) {
-      Object.keys(formErrors).forEach((key) => {
-        setError(`${key}`, {
-          type: "manual",
-          message: `${formErrors[key][0]}`,
-        });
-      });
-    }
-  }, [formErrors, setError]);
-
+  
   useEffect(() => {
     if (response.status === 200 && email.current !== null) {
       document.cookie = `user_email=${email.current}`;
@@ -52,7 +43,7 @@ function Login() {
       setUser(email.current);
     }
 
-    if(response?.data?.status === 202){
+    if (response?.data?.status === 202) {
       addUserHandler(response);
     }
   }, [response]);
@@ -67,6 +58,7 @@ function Login() {
   };
 
   const send = async (data) => {
+    dispatch(setErrors({}));
     email.current = data.email;
     await http.get("/sanctum/csrf-cookie");
     storeData("/login", data, dispatch, setResponse);
@@ -77,10 +69,15 @@ function Login() {
     fetchData(url, dispatch, setResponse);
   };
 
+  
+
   return (
     <Container>
       <StyledLogin $isMobile={isMobile}>
-        <h1>Login</h1>
+         <h1>Login</h1>
+        {stateErrors.length > 0 && stateErrors.lastIndexOf('422') && (
+          <Text textColor={red100} children={ErrorsTypes.wrongCredentials} />
+        )}
         <form onSubmit={handleSubmit(send)}>
           <Input
             name={"email"}

@@ -16,6 +16,10 @@ import { addProfessionSelect } from "../../common/utils";
 import { setSelectAmount } from "../../redux/slices/SignUp/signUpSlice";
 import { storeData } from "../../apis/ApiActions";
 import { setResponse } from "../../redux/slices/Response/responseSlice";
+import Text from "../../common/components/Text/Text";
+import { ErrorsTypes } from "../../common/utils";
+import { red100 } from "../../common/constants/colors";
+import { setErrors } from "../../redux/slices/Errors/errorsSlice";
 
 const SignUp = () => {
   const {
@@ -35,6 +39,7 @@ const SignUp = () => {
   const { selectAmount } = useSelector((state) => state.signUp);
   const [infoTech, setInfoTech] = useState(false);
   const defaultOption = { id: "default", name: "Select a city" };
+  const { stateErrors } = useSelector((state) => state.errors);
 
   useEffect(() => {
     dispatch(fetchCities());
@@ -52,6 +57,7 @@ const SignUp = () => {
 
   const send = async (data) => {
     let techArr = [];
+    dispatch(setErrors({}));
     //subtract professions
     if (selectAmount.length > 0) {
       selectAmount.forEach((item) => {
@@ -69,7 +75,7 @@ const SignUp = () => {
       professions: techArr,
       type: techArr.length > 0 ? "technician" : "client",
     };
-    
+
     await http.get("/sanctum/csrf-cookie");
     storeData(SAVE_USER_API, dataToStore, dispatch, setResponse);
   };
@@ -81,6 +87,9 @@ const SignUp = () => {
   return (
     <StyledSignUp>
       <h1>Sign up</h1>
+      {stateErrors.length > 0 && stateErrors[1] == 1062 && (
+        <Text textColor={red100} children={ErrorsTypes.duplicatedEntry} />
+      )}
       <form onSubmit={handleSubmit(send)}>
         <Input
           name={"first_name"}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { GET_JOBS, UPDATE_JOB } from "../../apis/jobsApi";
+import { GET_JOB, UPDATE_JOB } from "../../apis/jobsApi";
 import { RANKING_INDEX_API } from "../../apis/rankingsApi";
 import http from "../../axiosRequest";
 import { showRankingModal } from "../../redux/slices/Modals/modalSlice";
@@ -24,7 +24,7 @@ function Jobs() {
 
   async function getJobs() {
     await http
-      .get(GET_JOBS.replace("id", id))
+      .get(GET_JOB.replace("id", id))
       .then((response) => {
         if (
           response.status === 200 &&

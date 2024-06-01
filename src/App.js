@@ -9,6 +9,7 @@ import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
 import Navbar from "./common/components/Navbar/Navbar";
 import Profile from "./components/Profile/Profile";
 import Jobs from "./components/Jobs/Jobs";
+import RankCommentJob from "./components/RankCommentJob/RankCommentJob";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 
@@ -26,6 +27,7 @@ function App() {
                 <Route exact path="/home" element={<Home />} />
                 <Route exact path="/profile/:id" element={<Profile />} />
                 <Route exact path="/jobs/:id" element={<Jobs />} />
+                <Route exact path="/jobs/rank/:id" element={<RankCommentJob />} />
               </Route>
               <Route exact path="/" element={<LandingPage />} />
               <Route exact path="/login" element={<Login />} />

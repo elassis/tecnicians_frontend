@@ -55,7 +55,7 @@ function Profile() {
   useEffect(() => {
     getProfileData();
   }, [params.id, user]);
-
+//TODO - REFACTOR COMPONENTS AND SET THE CONDITIONALS
   return (
     <Container>
       <StyledBackButton>
@@ -84,7 +84,7 @@ function Profile() {
           button={<>{isUserOwner && (<Button callBack={() => dispatch(showEditInfoModal(true))}>Edit</Button>)}</>}
         />
       )}
-      {user_info && (
+      {user_info && user_info.type !== 'client' && (
         <>
           <Section
             title={"Professional info"}
@@ -110,7 +110,7 @@ function Profile() {
           />
         </>
       )}
-      {editInfoModal && user && (
+      {editInfoModal && user_info && (
         <ModalLayout
           title={"Edit Info"}
           children={<EditInfoModal {...user_info} />}

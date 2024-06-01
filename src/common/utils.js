@@ -46,3 +46,8 @@ export const formatPayload = (id, data) => {
 export const isOwner = (refOne, refTwo) => refOne === refTwo;
 
 export const defaultOption = { id: "default", name: "Select" };
+
+export const ErrorsTypes = {
+  wrongCredentials: "Oops! these credentials doesn't match our data, please try again.",
+  duplicatedEntry: "Oops! there's a duplicated entry, please double check the identification and email fields."
+}

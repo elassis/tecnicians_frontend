@@ -9,7 +9,7 @@ export const storeData = async (url, info, dispatch, responseAction) => {
       dispatch(responseAction(responseObj));
     })
     .catch((error) => {
-      dispatch(setErrors(error.message));
+      dispatch(setErrors(error.response.data.error ?? error.message));
     });
 };
 

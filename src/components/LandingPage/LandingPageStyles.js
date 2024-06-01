@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const StyledLandingPage = styled.div`
-padding-top:${props => props.isMobile ? '0px' : '20px'};
+padding-top:${props => props.$isMobile ? '0px' : '20px'};
 display:flex;
 flex-direction:column;
 justify-content:center;

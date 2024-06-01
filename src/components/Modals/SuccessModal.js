@@ -10,8 +10,8 @@ function ResponseModal({ response, mssg }) {
           ? mssg.success
           : "request successfully send"
         : mssg && mssg.success
-        ? mssg.failure
-        : "Something went wrong, please try again",
+          ? mssg.failure
+          : "Something went wrong, please try again",
     backgroundColor:
       response && response.data === 200
         ? "rgba(10, 255, 28, 0.39)"

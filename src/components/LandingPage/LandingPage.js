@@ -9,7 +9,7 @@ const LandingPage = () => {
   const { isMobile } = useDevice();
   return (
     <Container>
-      <StyledLandingPage isMobile={isMobile}>
+      <StyledLandingPage $isMobile={isMobile}>
         {isMobile && <h1>{SITE_TITLE}</h1>}
         <div className="img-container">
           <img

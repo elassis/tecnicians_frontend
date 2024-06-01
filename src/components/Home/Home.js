@@ -18,16 +18,16 @@ const Home = () => {
   const { user } = useSelector((state) => state);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  
   const { bookingModal } = useSelector((state) => state.modals);
-
+  
   useEffect(() => {
     dispatch(fetchTechnicians());
-    dispatch(setResponse({}));
   }, []);
 
   const displayModal = (technician) => {
     setSelectedTechnician(technician);
+    dispatch(setResponse({}));
     dispatch(showBookingModal(true));
   };
 
